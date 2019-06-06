@@ -1,0 +1,12 @@
+spring:
+datasource:
+url: jdbc:oracle:thin:@localhost:1521:orcl?useUnicode=true&characterEncoding=utf-8&useSSL=false
+username: zuer
+password: password
+driver-class-name: oracle.jdbc.driver.OracleDriver
+type: com.alibaba.druid.pool.DruidDataSourcecom.alibaba.druid.pool.DruidDataSource
+
+
+mybatis:
+typeAliasesPackage: com.example.zuer02.entity
+mapperLocations: classpath:mapper/*.xml

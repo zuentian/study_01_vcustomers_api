@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.zuer02.dao.BlogTypeDao" >
+
+    <resultMap id="BaseResultMap" type="com.example.zuer02.entity.BlogType" >
+        <id column="BLOG_TYPE_ID" property="blogTypeId" jdbcType="VARCHAR" />
+        <result column="BLOG_ID" property="blogId" jdbcType="VARCHAR" />
+        <result column="BLOG_TYPE_NAME" property="blogTypeName" jdbcType="VARCHAR" />
+        <result column="BLOG_TYPE_CRT_DATE" property="blogTypeCrtDate" jdbcType="VARCHAR" />
+        <result column="BLOG_TYPE_Alt_DATE" property="blogTypeAltDate" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <insert id="insertBlogType" parameterType="com.example.zuer02.entity.BlogType">
+
+        insert into BLOG_TYPE
+        (BLOG_TYPE_ID,BLOG_ID,BLOG_TYPE_NAME,BLOG_TYPE_CRT_DATE,BLOG_TYPE_Alt_DATE)
+        values(
+        #{blogTypeId},
+        #{blogId},
+        #{blogTypeName},
+        #{blogTypeCrtDate},
+        #{blogTypeAltDate}
+        )
+
+    </insert>
+
+    <select id="selectBlogType" resultMap="BaseResultMap">
+        select
+        *
+        from BLOG_TYPE
+    </select>
+    <select id="selectBlogTypeByBlogId" parameterType="String" resultMap="BaseResultMap">
+        select
+        *
+        from BLOG_TYPE
+        where BLOG_ID = #{blogId}
+    </select>
+    <delete id="deleteBlogTypeByBlogId" parameterType="String">
+        delete from BLOG_TYPE
+        where BLOG_ID = #{blogId}
+    </delete>
+
+</mapper>

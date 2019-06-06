@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+  <mapper namespace="com.example.zuer02.dao.AddressFirstDao" >
+
+
+    <resultMap id="BaseResultMap" type="com.example.zuer02.entity.AddressFirst" >
+        <id column="ADDRESS_FIRST_ID" property="addressFirstId" jdbcType="VARCHAR" />
+        <result column="ADDRESS_FIRST_SEQ_ID" property="addressFirstSeqId" jdbcType="VARCHAR" />
+        <result column="ADDRESS_FIRST_NAME" property="addressFirstName" jdbcType="VARCHAR" />
+        <result column="ADDRESS_FIRST_CRT_DATE" property="addressFirstCrtDate" jdbcType="DATE" />
+        <result column="ADDRESS_FIRST_ALT_DATE" property="addressFirstAltDate" jdbcType="DATE" />
+    </resultMap>
+
+    <select id="queryAddressListForFirstName" resultMap="BaseResultMap">
+        select * from
+        (select
+        *
+        from ADDRESS_FIRST
+        where
+        ADDRESS_FIRST_NAME = #{firstName}
+        and ADDRESS_FIRST_SEQ_ID = #{seqId}
+        order by ADDRESS_FIRST_ALT_DATE desc) a
+        where rownum=1 order by rownum desc
+    </select>
+
+    <insert id="insertAddressFirst" parameterType="com.example.zuer02.entity.AddressFirst">
+
+        insert into ADDRESS_FIRST
+        (ADDRESS_FIRST_ID,ADDRESS_FIRST_SEQ_ID,ADDRESS_FIRST_NAME,ADDRESS_FIRST_CRT_DATE,ADDRESS_FIRST_ALT_DATE)
+        values(
+        #{addressFirstId},
+        #{addressFirstSeqId},
+        #{addressFirstName},
+        sysdate,
+        sysdate
+        )
+
+    </insert>
+
+    <select id="queryAddressListById" resultMap="BaseResultMap">
+
+        select
+        *
+        from ADDRESS_FIRST
+
+        where ADDRESS_FIRST_SEQ_ID=#{id}
+
+    </select>
+</mapper>
