@@ -153,7 +153,7 @@ public class AddressListController {
             }
         }
 
-        System.out.println(addressNodeList);
+        //System.out.println(addressNodeList);
 
         return addressNodeList;
     }
