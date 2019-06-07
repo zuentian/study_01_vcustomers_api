@@ -7,7 +7,6 @@ import com.example.zuer02.entity.AddressFirst;
 import com.example.zuer02.entity.AddressNode;
 import com.example.zuer02.entity.AddressSecond;
 import com.example.zuer02.entity.AddressThird;
-import oracle.net.jdbc.TNSAddress.AddressList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.transaction.annotation.Transactional;
