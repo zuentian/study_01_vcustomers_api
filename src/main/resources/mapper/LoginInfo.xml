@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.zuer02.dao.LoginInfoDao" >
+
+    <resultMap id="BaseResultMap" type="com.example.zuer02.entity.LoginInfo" >
+        <id column="ID" property="id" jdbcType="VARCHAR" />
+        <result column="TYPE" property="type" jdbcType="NUMERIC" />
+        <result column="USER_ID" property="userId" jdbcType="NUMERIC" />
+        <result column="PRINCIPAL" property="principal" jdbcType="VARCHAR" />
+        <result column="CREDENTIAL" property="credential" jdbcType="VARCHAR" />
+        <result column="IS_LOCKED" property="isLocked" jdbcType="NUMERIC" />
+    </resultMap>
+
+    <insert id="insertLoginInfo" parameterType="com.example.zuer02.entity.LoginInfo">
+
+        insert into LOGIN_INFO
+        (ID,TYPE,USER_ID,PRINCIPAL,CREDENTIAL,IS_LOCKED)
+        values(
+        #{id},
+        #{type},
+        #{userId},
+        #{principal},
+        #{credential},
+        #{isLocked}
+        )
+
+    </insert>
+
+    <select id="findAccountByTypeAndPrincipal" resultMap="BaseResultMap">
+        select
+        *
+        from LOGIN_INFO
+        WHERE
+        TYPE = #{type} AND
+        PRINCIPAL = #{principal}
+
+    </select>
+
+</mapper>

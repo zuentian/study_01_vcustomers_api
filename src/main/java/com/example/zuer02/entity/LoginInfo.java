@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class LoginInfo {
+
+    private String  id;
     private Integer type;
 
     private Integer userId;
