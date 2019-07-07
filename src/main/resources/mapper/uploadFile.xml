@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.zuer02.dao.UploadFileDao" >
+
+    <resultMap id="BaseResultMap" type="com.example.zuer02.entity.UploadFileData" >
+        <id column="ID" property="id" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <insert id="insertUploadFileData" parameterType="com.example.zuer02.entity.UploadFileData">
+
+        insert into FILE_LIST_DATA
+        (ID)
+       /* ,FILE_NAME,FILE_TYPE,FILE_SIZE,FILE_CONTENT)*/
+        values(
+        #{id}
+        /*,
+        #{fileName},
+        #{fileType},
+        #{fileSize},
+        #{file}*/
+        )
+
+    </insert>
+
+
+</mapper>
