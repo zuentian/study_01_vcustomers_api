@@ -1,6 +1,7 @@
 package com.example.zuer02.controller;
 
 import com.example.zuer02.dao.UploadFileDao;
+import com.example.zuer02.entity.FileType;
 import com.example.zuer02.entity.UploadFileData;
 import com.example.zuer02.utils.FileUtil;
 import org.apache.commons.fileupload.FileItem;
@@ -42,13 +43,16 @@ public class UploadFileController {
         String base64File=FileUtil.encodeBase64File(file);
         UploadFileData uploadFileData=new UploadFileData();
         uploadFileData.setId(UUID.randomUUID().toString());
-        //uploadFileData.setFileName(request.getParameter("filename"));
-        //uploadFileData.setFileName(request.getParameter("filetype"));
-        //uploadFileData.setFileName(request.getParameter("filesize"));
-        //uploadFileData.setFile(base64File);
-        System.out.println(uploadFileData);
+        uploadFileData.setFileName(request.getParameter("filename"));
+        uploadFileData.setFileSize(request.getParameter("filesize"));
+        if("image/jpeg".equals(request.getParameter("filetype"))){
+           uploadFileData.setFileType(FileType.IMAGE.getCode());
+        }
+        uploadFileData.setFileContent(base64File);
         int i=uploadFileDao.insertUploadFileData(uploadFileData);
-        System.out.println(i);
         return "success";
     }
+
+
+
 }

@@ -6,4 +6,8 @@ import lombok.Data;
 public class UploadFileData {
 
     private String id;
+    private String fileName;
+    private String fileSize;
+    private String fileType;
+    private String fileContent;
 }

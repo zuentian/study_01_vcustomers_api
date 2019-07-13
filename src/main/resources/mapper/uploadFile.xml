@@ -4,20 +4,22 @@
 
     <resultMap id="BaseResultMap" type="com.example.zuer02.entity.UploadFileData" >
         <id column="ID" property="id" jdbcType="VARCHAR" />
+        <result column="FILE_NAME" property="fileName" jdbcType="VARCHAR" />
+        <result column="FILE_SIZE" property="fileSize" jdbcType="VARCHAR" />
+        <result column="FILE_TYPE" property="fileType" jdbcType="VARCHAR" />
+        <result column="FILE_CONTENT" property="fileContent" jdbcType="CLOB" />
     </resultMap>
 
     <insert id="insertUploadFileData" parameterType="com.example.zuer02.entity.UploadFileData">
 
         insert into FILE_LIST_DATA
-        (ID)
-       /* ,FILE_NAME,FILE_TYPE,FILE_SIZE,FILE_CONTENT)*/
+        (ID,FILE_NAME,FILE_SIZE,FILE_TYPE,FILE_CONTENT)
         values(
-        #{id}
-        /*,
-        #{fileName},
-        #{fileType},
-        #{fileSize},
-        #{file}*/
+        #{id,jdbcType=VARCHAR},
+        #{fileName,jdbcType=VARCHAR},
+        #{fileSize,jdbcType=VARCHAR},
+        #{fileType,jdbcType=VARCHAR},
+        #{fileContent,jdbcType=CLOB}
         )
 
     </insert>

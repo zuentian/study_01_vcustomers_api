@@ -67,6 +67,7 @@ public class UserController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         user.setUserAltDate(sdf.format(new Date()));
 
+        System.out.println(user);
         int i=userDao.updateUserByUserId(user);
         return i;
     }
