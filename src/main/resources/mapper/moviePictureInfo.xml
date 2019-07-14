@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.zuer02.dao.movie.MoviePictureInfoDao" >
+
+    <resultMap id="BaseResultMap" type="com.example.zuer02.entity.movie.MoviePictureInfo" >
+        <id column="MOVIE_PICTURE_ID" property="moviePictureId" jdbcType="VARCHAR" />
+        <result column="MOVIE_ID" property="movieId" jdbcType="VARCHAR" />
+        <result column="MOVIE_PICTURE_DATA" property="moviePictureData" jdbcType="CLOB" />
+    </resultMap>
+
+
+    <insert id="insertMoviePictureInfo" parameterType="com.example.zuer02.entity.movie.MoviePictureInfo">
+        INSERT INTO MOVIE_PICTURE_INFO
+        (MOVIE_PICTURE_ID, MOVIE_ID, MOVIE_PICTURE_DATA) VALUES
+        (
+          #{moviePictureId,jdbcType=VARCHAR},
+          #{movieId,jdbcType=VARCHAR},
+          #{moviePictureData,jdbcType=CLOB}
+        )
+    </insert>
+
+</mapper>

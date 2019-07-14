@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.zuer02.dao.movie.MovieBasicInfoDao" >
+
+    <resultMap id="BaseResultMap" type="com.example.zuer02.entity.movie.MovieBasicInfo" >
+        <id column="MOVIE_ID" property="movieId" jdbcType="VARCHAR" />
+        <result column="MOVIE_NAME" property="movieName" jdbcType="VARCHAR" />
+        <result column="MOVIE_ENGLISH_NAME" property="movieEnglishName" jdbcType="VARCHAR" />
+        <result column="MOVIE_COUNTRY" property="movieCountry" jdbcType="VARCHAR" />
+        <result column="MOVIE_DB_SCORE" property="movieDBScore" jdbcType="VARCHAR" />
+        <result column="MOVIE_CONTENT" property="movieContent" jdbcType="CLOB" />
+        <result column="MOVIE_SHOW_TIME" property="movieShowTime" jdbcType="VARCHAR" />
+        <result column="CRT_DATE" property="crtDate" jdbcType="DATE"/>
+        <result column="ALT_DATE" property="crtDate" jdbcType="DATE"/>
+    </resultMap>
+    <resultMap id="BaseResultMovieInfoMap" type="com.example.zuer02.entity.movie.MovieInfo" >
+        <id column="MOVIE_ID" property="movieId" jdbcType="VARCHAR" />
+        <result column="MOVIE_NAME" property="movieName" jdbcType="VARCHAR" />
+        <result column="MOVIE_ENGLISH_NAME" property="movieEnglishName" jdbcType="VARCHAR" />
+        <result column="MOVIE_COUNTRY" property="movieCountry" jdbcType="VARCHAR" />
+        <result column="MOVIE_DB_SCORE" property="movieDBScore" jdbcType="VARCHAR" />
+        <result column="MOVIE_SHOW_TIME" property="movieShowTime" jdbcType="VARCHAR" />
+        <result column="MOVIE_IS_WATCH" property="movieIsWatch" jdbcType="VARCHAR" />
+        <result column="MOVIE_WATCH_TIME" property="movieWatchTime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <insert id="insertMovieBasicInfo" parameterType="com.example.zuer02.entity.movie.MovieBasicInfo">
+        INSERT INTO MOVIE_BASIC_INFO
+        (MOVIE_ID, MOVIE_NAME, MOVIE_ENGLISH_NAME, MOVIE_COUNTRY, MOVIE_DB_SCORE, MOVIE_CONTENT, MOVIE_SHOW_TIME,CRT_DATE,ALT_DATE) VALUES
+        (
+          #{movieId,jdbcType=VARCHAR},
+          #{movieName,jdbcType=VARCHAR},
+          #{movieEnglishName,jdbcType=VARCHAR},
+          #{movieCountry,jdbcType=VARCHAR},
+          #{movieDBScore,jdbcType=VARCHAR},
+          #{movieContent,jdbcType=CLOB},
+          #{movieShowTime,jdbcType=VARCHAR},
+          sysdate,
+          sysdate
+        )
+    </insert>
+
+    <select id="queryMovieInfo" parameterType="String" resultMap="BaseResultMovieInfoMap">
+
+        select
+        m.MOVIE_ID MOVIE_ID,
+        m.MOVIE_NAME MOVIE_NAME,
+        m.MOVIE_ENGLISH_NAME MOVIE_ENGLISH_NAME,
+        m.MOVIE_COUNTRY MOVIE_COUNTRY,
+        m.MOVIE_DB_SCORE MOVIE_DB_SCORE,
+        m.MOVIE_SHOW_TIME MOVIE_SHOW_TIME,
+        u.MOVIE_WATCH_TIME MOVIE_WATCH_TIME,
+        u.MOVIE_IS_WATCH MOVIE_IS_WATCH
+        from MOVIE_BASIC_INFO m
+        left join MOVIE_USER_INFO u on m.MOVIE_ID=u.MOVIE_ID AND u.USER_ID = #{userId}
+        order by m.ALT_DATE desc
+    </select>
+
+</mapper>

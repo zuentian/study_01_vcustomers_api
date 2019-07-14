@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.zuer02.dao.movie.MovieTypeDao" >
+
+    <resultMap id="BaseResultMap" type="com.example.zuer02.entity.movie.MovieType" >
+        <id column="TYPE_CODE" property="typeCode" jdbcType="VARCHAR" />
+        <result column="TYPE_NAME" property="typeName" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+    <select id="queryMovieType" resultMap="BaseResultMap">
+        select
+        *
+        from MOVIE_TYPE
+    </select>
+
+</mapper>
