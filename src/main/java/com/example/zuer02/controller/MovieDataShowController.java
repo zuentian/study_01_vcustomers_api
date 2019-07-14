@@ -2,9 +2,12 @@ package com.example.zuer02.controller;
 
 
 import com.example.zuer02.dao.movie.*;
+import com.example.zuer02.entity.User;
 import com.example.zuer02.entity.movie.*;
 import com.example.zuer02.utils.DateUtil;
 import com.example.zuer02.utils.FileUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -130,12 +133,18 @@ public class MovieDataShowController {
 
     @Transactional(rollbackFor = { Exception.class })
     @RequestMapping(value = "/queryMovieInfo",method = RequestMethod.POST)
-    public List<MovieInfo> queryMovieInfo() throws Exception{
+    public PageInfo<MovieInfo> queryMovieInfo(@RequestBody Map<String, Object> param) throws Exception{
         try{
-            List<MovieInfo> movieInfoList=movieBasicInfoDao.queryMovieInfo(userId);
+            int page=Integer.valueOf(param.get("page").toString());
+            int pageSize=Integer.valueOf(param.get("pageSize").toString());
 
+            System.out.println(page+" "+pageSize);
+            PageHelper.startPage(page,pageSize);
+            PageHelper.orderBy("ALT_DATE DESC");
+            List<MovieInfo> movieInfoList=movieBasicInfoDao.queryMovieInfo(userId);
+            PageInfo<MovieInfo> pageInfo=new PageInfo<MovieInfo>(movieInfoList);
             //System.out.println(movieInfoList);
-            return movieInfoList;
+            return pageInfo;
         } catch (Exception e) {
             e.printStackTrace();
             //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//就是这一句了，加上之后，如果doDbStuff2()抛了异常,     doDbStuff1()是会回滚的                                                                                   //doDbStuff1()是会回滚的
