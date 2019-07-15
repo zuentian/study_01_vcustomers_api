@@ -12,6 +12,13 @@ create table MOVIE_BASIC_INFO
 	CRT_DATE DATE default SYSDATE,
 	ALT_DATE DATE default SYSDATE
 );
+create table MOVIE_PICTURE_INFO
+(
+  MOVIE_PICTURE_ID   VARCHAR2(36) not null
+    primary key,
+  MOVIE_ID           VARCHAR2(36),
+  MOVIE_PICTURE_DATA CLOB
+);
 create table MOVIE_REL_INFO
 (
 	MOVIE_REL_ID VARCHAR2(36) not null
