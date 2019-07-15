@@ -2,21 +2,23 @@ package com.example.zuer02.entity.movie;
 
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 @Data
-public class MovieInfo {
+public class MovieShowInfoAll {
     private String movieId;
     private String movieName;
     private String movieEnglishName;
     private String movieCountry;
-    private String movieDBScore;
+    private double movieDBScore;
     private String movieContent;
-    private String movieShowTime;
+    private Date movieShowTime;
     //private String movieTypeCode;
-    private String movieIsWatch;
-    private String movieWatchTime;
+    private Boolean movieIsWatch;
+    private Date movieWatchTime;
 
-
+    private List<String> movieTypes;
+    private List<Map<String,String>>movieRelNames;
 }

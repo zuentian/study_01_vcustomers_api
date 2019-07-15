@@ -68,7 +68,7 @@ public class MovieDataShowController {
             String movieId=UUID.randomUUID().toString();
             movieBasicInfo.setMovieId(movieId);
             movieBasicInfo.setMovieName(request.getParameter("movieName"));
-            movieBasicInfo.setMovieEnglishName(request.getParameter("movieEngLishName"));
+            movieBasicInfo.setMovieEnglishName(request.getParameter("movieEnglishName"));
             movieBasicInfo.setMovieCountry(request.getParameter("movieCountry"));
             movieBasicInfo.setMovieDBScore(request.getParameter("movieDBScore"));
             movieBasicInfo.setMovieShowTime(DateUtil.gmtToStringYMD(request.getParameter("movieShowTime")));
@@ -137,11 +137,9 @@ public class MovieDataShowController {
         try{
             int page=Integer.valueOf(param.get("page").toString());
             int pageSize=Integer.valueOf(param.get("pageSize").toString());
-
-            System.out.println(page+" "+pageSize);
             PageHelper.startPage(page,pageSize);
             PageHelper.orderBy("ALT_DATE DESC");
-            List<MovieInfo> movieInfoList=movieBasicInfoDao.queryMovieInfo(userId);
+            List<MovieInfo> movieInfoList=movieBasicInfoDao.queryMovieInfoByUserId(userId);
             PageInfo<MovieInfo> pageInfo=new PageInfo<MovieInfo>(movieInfoList);
             //System.out.println(movieInfoList);
             return pageInfo;
@@ -150,5 +148,39 @@ public class MovieDataShowController {
             //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//就是这一句了，加上之后，如果doDbStuff2()抛了异常,     doDbStuff1()是会回滚的                                                                                   //doDbStuff1()是会回滚的
             throw new Exception(e.getMessage()) ;
         }
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    @RequestMapping(value = "queryMovieDataByMovieId",method = RequestMethod.GET)
+    public MovieShowInfoAll queryMovieDataByMovieId(@RequestParam("movieId")String movieId)throws Exception{
+        MovieShowInfoAll movieShowInfoAll=new MovieShowInfoAll();
+        MovieBasicInfo movieBasicInfo=movieBasicInfoDao.queryMovieInfoByMovieId(movieId);
+        if(movieBasicInfo==null){
+            throw new Exception("加载失败");
+        }
+        movieShowInfoAll.setMovieId(movieBasicInfo.getMovieId());
+        movieShowInfoAll.setMovieName(movieBasicInfo.getMovieName());
+        movieShowInfoAll.setMovieEnglishName(movieBasicInfo.getMovieEnglishName());
+        movieShowInfoAll.setMovieCountry(movieBasicInfo.getMovieCountry());
+        movieShowInfoAll.setMovieDBScore(Double.valueOf(movieBasicInfo.getMovieDBScore()));
+        movieShowInfoAll.setMovieShowTime(DateUtil.StringYMDToDate(movieBasicInfo.getMovieShowTime()));
+        movieShowInfoAll.setMovieContent(movieBasicInfo.getMovieContent());
+        MovieUserInfo movieUserInfo=movieUserInfoDao.queryMovieUserInfoByMovieIdAndUserId(movieId,userId);
+        if(movieUserInfo!=null){
+            movieShowInfoAll.setMovieIsWatch("true".equals(movieUserInfo.getMovieIsWatch())?true:false);
+            movieShowInfoAll.setMovieWatchTime(DateUtil.StringYMDToDate(movieUserInfo.getMovieWatchTime()));
+        }
+        List<MovieTypeInfo> movieTypeInfoList=movieTypeInfoDao.queryMovieTypeInfoByMovieId(movieId);
+        List<String> movieTypes=new ArrayList<String>();
+        if(movieTypeInfoList!=null&&movieTypeInfoList.size()>0){
+            for (MovieTypeInfo movieTypeInfo:movieTypeInfoList) {
+                movieTypes.add(movieTypeInfo.getMovieCode());
+            }
+        }
+        movieShowInfoAll.setMovieTypes(movieTypes);
+        System.out.println(movieShowInfoAll);
+
+
+        return movieShowInfoAll;
     }
 }

@@ -40,7 +40,7 @@
         )
     </insert>
 
-    <select id="queryMovieInfo" parameterType="String" resultMap="BaseResultMovieInfoMap">
+    <select id="queryMovieInfoByUserId" parameterType="String" resultMap="BaseResultMovieInfoMap">
 
         select
         m.MOVIE_ID MOVIE_ID,
@@ -54,6 +54,13 @@
         from MOVIE_BASIC_INFO m
         left join MOVIE_USER_INFO u on m.MOVIE_ID=u.MOVIE_ID AND u.USER_ID = #{userId}
         order by m.ALT_DATE desc
+    </select>
+
+    <select id="queryMovieInfoByMovieId" parameterType="String" resultMap="BaseResultMap">
+
+        select * from MOVIE_BASIC_INFO
+        where MOVIE_ID=#{movieId}
+
     </select>
 
 </mapper>

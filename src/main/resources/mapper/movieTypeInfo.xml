@@ -19,4 +19,12 @@
         )
     </insert>
 
+    <select id="queryMovieTypeInfoByMovieId" parameterType="String" resultMap="BaseResultMap">
+
+        select * from MOVIE_TYPE_INFO
+
+        where MOVIE_ID= #{movieId}
+
+    </select>
+
 </mapper>

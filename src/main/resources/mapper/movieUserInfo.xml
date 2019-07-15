@@ -21,4 +21,12 @@
         )
     </insert>
 
+    <select id="queryMovieUserInfoByMovieIdAndUserId" parameterType="String" resultMap="BaseResultMap">
+
+        select * from MOVIE_USER_INFO
+        where MOVIE_ID=#{movieId}
+        AND USER_ID=#{userId}
+
+    </select>
+
 </mapper>

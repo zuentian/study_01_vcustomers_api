@@ -11,5 +11,7 @@ import java.util.List;
 public interface MovieBasicInfoDao {
     int insertMovieBasicInfo(MovieBasicInfo movieBasicInfo);
 
-    List<MovieInfo> queryMovieInfo(@Param("userId") String userId);
+    List<MovieInfo> queryMovieInfoByUserId(@Param("userId") String userId);
+
+    MovieBasicInfo queryMovieInfoByMovieId(@Param("movieId") String movieId);
 }

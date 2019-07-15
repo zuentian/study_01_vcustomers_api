@@ -1,5 +1,6 @@
 package com.example.zuer02.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -30,6 +31,7 @@ public class DateUtil {
             throw new RuntimeException("时间转化格式错误" + "[dateString=" + dateString + "]" + "[FORMAT_STRING=" + FORMAT_STRING + "]");
         }
     }
+    //yyyy-MM-dd
     public static String gmtToStringYMD(String dateString){
         Date date=gmtToDate(dateString);
         if(date!=null){
@@ -40,6 +42,21 @@ public class DateUtil {
             return "";
         }
 
+    }
+    //yyyy-MM-dd
+    public static Date StringYMDToDate(String dateString) throws RuntimeException{
+
+        if(dateString==null){
+            return null;
+        }
+        SimpleDateFormat sf1=new SimpleDateFormat(FORMAT_STRING_YMD);
+        try {
+
+            return sf1.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            throw new RuntimeException("日期转换异常");
+        }
     }
 
     public static void main(String[] args) {
