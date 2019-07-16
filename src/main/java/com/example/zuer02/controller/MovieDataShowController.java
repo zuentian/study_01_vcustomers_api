@@ -133,16 +133,38 @@ public class MovieDataShowController {
 
     @Transactional(rollbackFor = { Exception.class })
     @RequestMapping(value = "/queryMovieInfo",method = RequestMethod.POST)
-    public PageInfo<MovieInfo> queryMovieInfo(@RequestBody Map<String, Object> param) throws Exception{
+    public Map<String,Object> queryMovieInfo(@RequestBody Map<String, Object> param) throws Exception{
+
+        Map<String,Object> resultMap=new HashMap<String,Object>();
+
+        //此处PageHelper有个大坑，它无法对关联查询的sql正确分页，故不再采用
         try{
             int page=Integer.valueOf(param.get("page").toString());
             int pageSize=Integer.valueOf(param.get("pageSize").toString());
-            PageHelper.startPage(page,pageSize);
-            PageHelper.orderBy("ALT_DATE DESC");
-            List<MovieInfo> movieInfoList=movieBasicInfoDao.queryMovieInfoByUserId(userId);
-            PageInfo<MovieInfo> pageInfo=new PageInfo<MovieInfo>(movieInfoList);
+            System.out.println(page+" "+pageSize);
+            //PageHelper.startPage(page,pageSize);
+            //PageHelper.orderBy("ALT_DATE DESC");
+
+            int start=(page-1)*pageSize+1;
+            int end=page*pageSize;
+
+            Map<String,Object> map=new HashMap<String,Object>();
+            map.put("userId",userId);
+            map.put("start",start);
+            map.put("end",end);
+            int count=movieBasicInfoDao.queryMovieInfoByUserIdCount(map);
+            List<MovieInfo> movieInfoList=null;
+            if(count>0){
+                movieInfoList=movieBasicInfoDao.queryMovieInfoByUserId(map);
+            }
+
+            //<MovieInfo> pageInfo=new PageInfo<MovieInfo>(movieInfoList);
             //System.out.println(movieInfoList);
-            return pageInfo;
+
+            resultMap.put("list",movieInfoList);
+            resultMap.put("count",count);
+
+            return resultMap;
         } catch (Exception e) {
             e.printStackTrace();
             //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//就是这一句了，加上之后，如果doDbStuff2()抛了异常,     doDbStuff1()是会回滚的                                                                                   //doDbStuff1()是会回滚的
@@ -178,7 +200,23 @@ public class MovieDataShowController {
             }
         }
         movieShowInfoAll.setMovieTypes(movieTypes);
-        System.out.println(movieShowInfoAll);
+        //System.out.println(movieShowInfoAll);
+        List<MovieRelNameInfo> movieRelNameInfoList= movieRelNameInfoDao.queryMovieRelNameInfoByMovieId(movieId);
+
+        List<Map<String,String>>movieRelNames=new ArrayList<>();
+        if(movieRelNameInfoList!=null&&movieRelNameInfoList.size()>0){
+            for (MovieRelNameInfo movieRelName:movieRelNameInfoList) {
+                Map<String,String>map=new HashMap<>();
+                map.put("movieRelName",movieRelName.getMovieRelName());
+                movieRelNames.add(map);
+            }
+            movieShowInfoAll.setMovieRelNames(movieRelNames);
+        }else{
+            Map<String,String>map=new HashMap<>();
+            map.put("movieRelName","");
+            movieRelNames.add(map);
+            movieShowInfoAll.setMovieRelNames(movieRelNames);
+        }
 
 
         return movieShowInfoAll;

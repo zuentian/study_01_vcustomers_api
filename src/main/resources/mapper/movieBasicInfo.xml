@@ -40,9 +40,11 @@
         )
     </insert>
 
-    <select id="queryMovieInfoByUserId" parameterType="String" resultMap="BaseResultMovieInfoMap">
+    <select id="queryMovieInfoByUserId" parameterType="java.util.Map"  resultMap="BaseResultMovieInfoMap">
 
-        select
+        SELECT TAB1.* FROM
+        (select tab.*,ROWNUM AS RM FROM
+        (select
         m.MOVIE_ID MOVIE_ID,
         m.MOVIE_NAME MOVIE_NAME,
         m.MOVIE_ENGLISH_NAME MOVIE_ENGLISH_NAME,
@@ -54,8 +56,18 @@
         from MOVIE_BASIC_INFO m
         left join MOVIE_USER_INFO u on m.MOVIE_ID=u.MOVIE_ID AND u.USER_ID = #{userId}
         order by m.ALT_DATE desc
+        ) TAB ) TAB1
+        WHERE
+        TAB1.RM BETWEEN #{start} AND #{end}
     </select>
+    <select id="queryMovieInfoByUserIdCount" parameterType="java.util.Map" resultType="java.lang.Integer">
 
+        select
+        count(*)
+        from MOVIE_BASIC_INFO m
+        left join MOVIE_USER_INFO u on m.MOVIE_ID=u.MOVIE_ID AND u.USER_ID = #{userId}
+
+    </select>
     <select id="queryMovieInfoByMovieId" parameterType="String" resultMap="BaseResultMap">
 
         select * from MOVIE_BASIC_INFO
