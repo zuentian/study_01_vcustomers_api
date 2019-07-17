@@ -1,6 +1,7 @@
 package com.example.zuer02.entity.movie;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
@@ -21,4 +22,5 @@ public class MovieShowInfoAll {
 
     private List<String> movieTypes;
     private List<Map<String,String>>movieRelNames;
+    private List<String> files;
 }

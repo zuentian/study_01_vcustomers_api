@@ -2,12 +2,9 @@ package com.example.zuer02.controller;
 
 
 import com.example.zuer02.dao.movie.*;
-import com.example.zuer02.entity.User;
 import com.example.zuer02.entity.movie.*;
 import com.example.zuer02.utils.DateUtil;
 import com.example.zuer02.utils.FileUtil;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +55,7 @@ public class MovieDataShowController {
     }
 
     @Transactional(rollbackFor = { Exception.class })
-    @RequestMapping(value="/addMovieData", method=RequestMethod.POST)
+    @RequestMapping(value="/addMovieData", method= RequestMethod.POST)
     public String uploadFile(@RequestParam("files") MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 
@@ -117,7 +114,7 @@ public class MovieDataShowController {
                 MoviePictureInfo moviePictureInfo=new MoviePictureInfo();
                 moviePictureInfo.setMoviePictureId(UUID.randomUUID().toString());
                 moviePictureInfo.setMovieId(movieId);
-                moviePictureInfo.setMoviePictureData(FileUtil.encodeBase64File(file));
+                //moviePictureInfo.setMoviePictureData(FileUtil.encodeBase64File(file));
                 //System.out.println(moviePictureInfo);
                 moviePictureInfoDao.insertMoviePictureInfo(moviePictureInfo);
             }
@@ -141,7 +138,7 @@ public class MovieDataShowController {
         try{
             int page=Integer.valueOf(param.get("page").toString());
             int pageSize=Integer.valueOf(param.get("pageSize").toString());
-            System.out.println(page+" "+pageSize);
+            //System.out.println(page+" "+pageSize);
             //PageHelper.startPage(page,pageSize);
             //PageHelper.orderBy("ALT_DATE DESC");
 
@@ -218,6 +215,15 @@ public class MovieDataShowController {
             movieShowInfoAll.setMovieRelNames(movieRelNames);
         }
 
+        //List<MoviePictureInfo> moviePictureInfoList=moviePictureInfoDao.queryMoviePictureInfoByMovieId(movieId);
+       // List<String>files=new ArrayList<>();
+        //if(moviePictureInfoList!=null&&moviePictureInfoList.size()>0){
+           // for(MoviePictureInfo moviePictureInfo:moviePictureInfoList){
+                //MultipartFile file=BASE64DecodedMultipartFile.base64ToMultipart(moviePictureInfo.getMoviePictureData());
+                //files.add(moviePictureInfo.getMoviePictureData());
+           // }
+       // }
+       // movieShowInfoAll.setFiles(files);
 
         return movieShowInfoAll;
     }
