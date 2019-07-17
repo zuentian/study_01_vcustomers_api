@@ -6,5 +6,5 @@ import lombok.Data;
 public class MoviePictureInfo {
     private String moviePictureId;
     private String movieId;
-    private String moviePictureData;
+    private String moviePictureUrl;
 }

@@ -5,6 +5,7 @@ import com.example.zuer02.dao.movie.*;
 import com.example.zuer02.entity.movie.*;
 import com.example.zuer02.utils.DateUtil;
 import com.example.zuer02.utils.FileUtil;
+import com.example.zuer02.utils.UploadFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.util.*;
 
 @RestController//视图解析器
@@ -108,14 +110,13 @@ public class MovieDataShowController {
                     movieRelNameInfoDao.insertMovieRelNameInfo(movieRelNameInfo);
                 }
             }
-
             //电影海报和剧照
             for(MultipartFile file:files){
                 MoviePictureInfo moviePictureInfo=new MoviePictureInfo();
-                moviePictureInfo.setMoviePictureId(UUID.randomUUID().toString());
+                String moviePictureId=UUID.randomUUID().toString();
+                moviePictureInfo.setMoviePictureId(moviePictureId);
                 moviePictureInfo.setMovieId(movieId);
-                //moviePictureInfo.setMoviePictureData(FileUtil.encodeBase64File(file));
-                //System.out.println(moviePictureInfo);
+                moviePictureInfo.setMoviePictureUrl(UploadFile.uploadMultipartFile(file,moviePictureId));
                 moviePictureInfoDao.insertMoviePictureInfo(moviePictureInfo);
             }
 
@@ -170,8 +171,10 @@ public class MovieDataShowController {
     }
 
     @Transactional(rollbackFor = {Exception.class})
-    @RequestMapping(value = "queryMovieDataByMovieId",method = RequestMethod.GET)
-    public MovieShowInfoAll queryMovieDataByMovieId(@RequestParam("movieId")String movieId)throws Exception{
+    @RequestMapping(value = "queryMovieDataByMovieId",method = RequestMethod.POST)
+    public Map<String,Object> queryMovieDataByMovieId(@RequestBody Map<String, Object> param)throws Exception{
+        String movieId=String.valueOf(param.get("movieId"));
+        System.out.println(movieId);
         MovieShowInfoAll movieShowInfoAll=new MovieShowInfoAll();
         MovieBasicInfo movieBasicInfo=movieBasicInfoDao.queryMovieInfoByMovieId(movieId);
         if(movieBasicInfo==null){
@@ -215,16 +218,17 @@ public class MovieDataShowController {
             movieShowInfoAll.setMovieRelNames(movieRelNames);
         }
 
-        //List<MoviePictureInfo> moviePictureInfoList=moviePictureInfoDao.queryMoviePictureInfoByMovieId(movieId);
-       // List<String>files=new ArrayList<>();
-        //if(moviePictureInfoList!=null&&moviePictureInfoList.size()>0){
-           // for(MoviePictureInfo moviePictureInfo:moviePictureInfoList){
-                //MultipartFile file=BASE64DecodedMultipartFile.base64ToMultipart(moviePictureInfo.getMoviePictureData());
-                //files.add(moviePictureInfo.getMoviePictureData());
-           // }
-       // }
-       // movieShowInfoAll.setFiles(files);
-
-        return movieShowInfoAll;
+        List<MoviePictureInfo> moviePictureInfoList=moviePictureInfoDao.queryMoviePictureInfoByMovieId(movieId);
+        List<String>files=new ArrayList<>();
+        if(moviePictureInfoList!=null&&moviePictureInfoList.size()>0){
+            for(MoviePictureInfo moviePictureInfo:moviePictureInfoList){
+                String url=moviePictureInfo.getMoviePictureUrl();
+                files.add(url);
+            }
+        }
+        movieShowInfoAll.setFiles(files);
+        Map<String,Object>map=new HashMap<>();
+        map.put("list",movieShowInfoAll);
+        return map;
     }
 }

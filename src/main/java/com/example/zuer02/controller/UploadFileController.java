@@ -7,6 +7,7 @@ import com.example.zuer02.utils.FileUtil;
 import com.example.zuer02.utils.UploadFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ResourceUtils;
@@ -19,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.UUID;
 @RestController
 @EnableAutoConfiguration
@@ -43,14 +46,23 @@ public class UploadFileController {
         //uploadFileData.setFileContent(base64File);
         //int i=uploadFileDao.insertUploadFileData(uploadFileData);
         //获取根目录
-        String path=UploadFile.uploadMultipartFile(file,file.getOriginalFilename());
+        UploadFile.uploadMultipartFile(file,file.getOriginalFilename());
 
-        System.out.println(path);
 
 
         return "success";
     }
 
 
+    public static void main(String[] args) {
+
+            try {
+                String host = InetAddress.getLocalHost().getHostAddress();
+                System.out.println(host);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+
+    }
 
 }

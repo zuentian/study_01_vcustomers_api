@@ -5,17 +5,17 @@
     <resultMap id="BaseResultMap" type="com.example.zuer02.entity.movie.MoviePictureInfo" >
         <id column="MOVIE_PICTURE_ID" property="moviePictureId" jdbcType="VARCHAR" />
         <result column="MOVIE_ID" property="movieId" jdbcType="VARCHAR" />
-        <result column="MOVIE_PICTURE_DATA" property="moviePictureData" jdbcType="CLOB" />
+        <result column="MOVIE_PICTURE_URL" property="moviePictureUrl" jdbcType="VARCHAR" />
     </resultMap>
 
 
     <insert id="insertMoviePictureInfo" parameterType="com.example.zuer02.entity.movie.MoviePictureInfo">
         INSERT INTO MOVIE_PICTURE_INFO
-        (MOVIE_PICTURE_ID, MOVIE_ID, MOVIE_PICTURE_DATA) VALUES
+        (MOVIE_PICTURE_ID, MOVIE_ID, MOVIE_PICTURE_URL) VALUES
         (
           #{moviePictureId,jdbcType=VARCHAR},
           #{movieId,jdbcType=VARCHAR},
-          #{moviePictureData,jdbcType=CLOB}
+          #{moviePictureUrl,jdbcType=VARCHAR}
         )
     </insert>
 
