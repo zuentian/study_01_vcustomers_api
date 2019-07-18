@@ -5,6 +5,7 @@ import com.example.zuer02.dao.movie.*;
 import com.example.zuer02.entity.movie.*;
 import com.example.zuer02.utils.DateUtil;
 import com.example.zuer02.utils.FileUtil;
+import com.example.zuer02.utils.IpAddress;
 import com.example.zuer02.utils.UploadFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -116,6 +117,7 @@ public class MovieDataShowController {
                 String moviePictureId=UUID.randomUUID().toString();
                 moviePictureInfo.setMoviePictureId(moviePictureId);
                 moviePictureInfo.setMovieId(movieId);
+                moviePictureInfo.setMovieName(file.getOriginalFilename());
                 moviePictureInfo.setMoviePictureUrl(UploadFile.uploadMultipartFile(file,moviePictureId));
                 moviePictureInfoDao.insertMoviePictureInfo(moviePictureInfo);
             }
@@ -131,7 +133,8 @@ public class MovieDataShowController {
 
     @Transactional(rollbackFor = { Exception.class })
     @RequestMapping(value = "/queryMovieInfo",method = RequestMethod.POST)
-    public Map<String,Object> queryMovieInfo(@RequestBody Map<String, Object> param) throws Exception{
+    public Map<String,Object> queryMovieInfo(@RequestBody Map<String, Object> param,HttpServletRequest request) throws Exception{
+
 
         Map<String,Object> resultMap=new HashMap<String,Object>();
 
@@ -174,7 +177,7 @@ public class MovieDataShowController {
     @RequestMapping(value = "queryMovieDataByMovieId",method = RequestMethod.POST)
     public Map<String,Object> queryMovieDataByMovieId(@RequestBody Map<String, Object> param)throws Exception{
         String movieId=String.valueOf(param.get("movieId"));
-        System.out.println(movieId);
+
         MovieShowInfoAll movieShowInfoAll=new MovieShowInfoAll();
         MovieBasicInfo movieBasicInfo=movieBasicInfoDao.queryMovieInfoByMovieId(movieId);
         if(movieBasicInfo==null){

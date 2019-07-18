@@ -57,7 +57,7 @@ public class UploadFileController {
     public static void main(String[] args) {
 
             try {
-                String host = InetAddress.getLocalHost().getHostAddress();
+                Object host = InetAddress.getLocalHost();
                 System.out.println(host);
             } catch (UnknownHostException e) {
                 e.printStackTrace();
