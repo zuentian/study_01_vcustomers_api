@@ -75,4 +75,18 @@
 
     </select>
 
+    <update id="updateMovieBasicInfoByMovieId" parameterType="com.example.zuer02.entity.movie.MovieBasicInfo" >
+
+        update MOVIE_BASIC_INFO
+        set
+        MOVIE_NAME = #{movieName,jdbcType=VARCHAR},
+        MOVIE_ENGLISH_NAME = #{movieEnglishName,jdbcType=VARCHAR},
+        MOVIE_COUNTRY = #{movieCountry,jdbcType=VARCHAR},
+        MOVIE_DB_SCORE = #{movieDBScore,jdbcType=VARCHAR},
+        MOVIE_CONTENT = #{movieContent,jdbcType=CLOB},
+        MOVIE_SHOW_TIME = #{movieShowTime,jdbcType=VARCHAR}
+        where
+        MOVIE_ID=#{movieId,jdbcType=VARCHAR}
+    </update>
+
 </mapper>

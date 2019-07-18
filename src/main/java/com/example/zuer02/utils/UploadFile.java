@@ -1,5 +1,8 @@
 package com.example.zuer02.utils;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -7,13 +10,21 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 
+@Component//这个注释是把普通pojo实例化到spring容器中，相当于配置文件中的<bean id="" class=""/>，不加无法读取配置文件里的数据
+@PropertySource(value = {"classpath:person.properties" })
 public class UploadFile {
 
 
+    private static String uploadimagesPath;
+    @Value("${local.upload.images}")
+    private void setUploadimagesPath(String uploadimagesPath){
+        UploadFile.uploadimagesPath=uploadimagesPath;
+    }
 
     /*
     filePath是从日期开始到文件名的路径
      */
+
     public static String uploadMultipartFile(MultipartFile file,String filePath)throws Exception{
 
         Calendar cal = Calendar.getInstance();
@@ -32,7 +43,7 @@ public class UploadFile {
                 if(!path.exists()){
                     path=new File("");
                 }
-                File upload=new File(path.getAbsolutePath(),"static/file/images/");
+                File upload=new File(path.getAbsolutePath(),"static"+ File.separator+uploadimagesPath);
                 if(!upload.exists()) {
                     upload.mkdirs();
                 }
@@ -42,7 +53,7 @@ public class UploadFile {
                 }
                 try {
                     file.transferTo(new File(finalFileDir.getAbsolutePath()+ File.separator+filePath+"."+type));
-                    return datePath+ File.separator+filePath+"."+type;
+                    return uploadimagesPath+File.separator+datePath+ File.separator+filePath+"."+type;
                 } catch (Exception e) {
                     throw new Exception("图片文件储存异常！");
                 }

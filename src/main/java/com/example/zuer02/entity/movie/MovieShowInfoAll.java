@@ -15,12 +15,12 @@ public class MovieShowInfoAll {
     private String movieCountry;
     private double movieDBScore;
     private String movieContent;
-    private Date movieShowTime;
+    private String movieShowTime;
     //private String movieTypeCode;
     private Boolean movieIsWatch;
-    private Date movieWatchTime;
+    private String movieWatchTime;
 
     private List<String> movieTypes;
     private List<Map<String,String>>movieRelNames;
-    private List<String> files;
+    private List<MoviePictureInfoBase> files;
 }

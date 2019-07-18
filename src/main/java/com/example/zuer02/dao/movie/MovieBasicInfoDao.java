@@ -18,4 +18,6 @@ public interface MovieBasicInfoDao {
 
 
     int queryMovieInfoByUserIdCount(Map<String, Object> map);
+
+    int updateMovieBasicInfoByMovieId(MovieBasicInfo movieInfo );
 }

@@ -4,17 +4,18 @@ package com.example.zuer02.controller;
 import com.example.zuer02.dao.movie.*;
 import com.example.zuer02.entity.movie.*;
 import com.example.zuer02.utils.DateUtil;
-import com.example.zuer02.utils.FileUtil;
-import com.example.zuer02.utils.IpAddress;
 import com.example.zuer02.utils.UploadFile;
+import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -23,6 +24,7 @@ import java.util.*;
 @RestController//视图解析器
 @EnableAutoConfiguration//自动配置
 @RequestMapping(value="MovieDataShow")
+
 public class MovieDataShowController {
 
 
@@ -40,6 +42,9 @@ public class MovieDataShowController {
     MovieRelNameInfoDao movieRelNameInfoDao;
     @Autowired
     MoviePictureInfoDao moviePictureInfoDao;
+
+    @Value("${local.vueIp}")
+    private String vueIp;
 
     @Transactional(rollbackFor = { Exception.class })
     @RequestMapping(value="/getMonthMovieCount", method=RequestMethod.GET)
@@ -59,7 +64,7 @@ public class MovieDataShowController {
 
     @Transactional(rollbackFor = { Exception.class })
     @RequestMapping(value="/addMovieData", method= RequestMethod.POST)
-    public String uploadFile(@RequestParam("files") MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public String addMovieData(@RequestParam("files") MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 
         try{
@@ -118,7 +123,7 @@ public class MovieDataShowController {
                 moviePictureInfo.setMoviePictureId(moviePictureId);
                 moviePictureInfo.setMovieId(movieId);
                 moviePictureInfo.setMovieName(file.getOriginalFilename());
-                moviePictureInfo.setMoviePictureUrl(UploadFile.uploadMultipartFile(file,moviePictureId));
+                moviePictureInfo.setMoviePictureUrl(File.separator+vueIp+ File.separator+UploadFile.uploadMultipartFile(file,moviePictureId));
                 moviePictureInfoDao.insertMoviePictureInfo(moviePictureInfo);
             }
 
@@ -134,7 +139,6 @@ public class MovieDataShowController {
     @Transactional(rollbackFor = { Exception.class })
     @RequestMapping(value = "/queryMovieInfo",method = RequestMethod.POST)
     public Map<String,Object> queryMovieInfo(@RequestBody Map<String, Object> param,HttpServletRequest request) throws Exception{
-
 
         Map<String,Object> resultMap=new HashMap<String,Object>();
 
@@ -188,12 +192,12 @@ public class MovieDataShowController {
         movieShowInfoAll.setMovieEnglishName(movieBasicInfo.getMovieEnglishName());
         movieShowInfoAll.setMovieCountry(movieBasicInfo.getMovieCountry());
         movieShowInfoAll.setMovieDBScore(Double.valueOf(movieBasicInfo.getMovieDBScore()));
-        movieShowInfoAll.setMovieShowTime(DateUtil.StringYMDToDate(movieBasicInfo.getMovieShowTime()));
+        movieShowInfoAll.setMovieShowTime(movieBasicInfo.getMovieShowTime());
         movieShowInfoAll.setMovieContent(movieBasicInfo.getMovieContent());
         MovieUserInfo movieUserInfo=movieUserInfoDao.queryMovieUserInfoByMovieIdAndUserId(movieId,userId);
         if(movieUserInfo!=null){
             movieShowInfoAll.setMovieIsWatch("true".equals(movieUserInfo.getMovieIsWatch())?true:false);
-            movieShowInfoAll.setMovieWatchTime(DateUtil.StringYMDToDate(movieUserInfo.getMovieWatchTime()));
+            movieShowInfoAll.setMovieWatchTime(movieUserInfo.getMovieWatchTime());
         }
         List<MovieTypeInfo> movieTypeInfoList=movieTypeInfoDao.queryMovieTypeInfoByMovieId(movieId);
         List<String> movieTypes=new ArrayList<String>();
@@ -221,17 +225,40 @@ public class MovieDataShowController {
             movieShowInfoAll.setMovieRelNames(movieRelNames);
         }
 
-        List<MoviePictureInfo> moviePictureInfoList=moviePictureInfoDao.queryMoviePictureInfoByMovieId(movieId);
-        List<String>files=new ArrayList<>();
-        if(moviePictureInfoList!=null&&moviePictureInfoList.size()>0){
-            for(MoviePictureInfo moviePictureInfo:moviePictureInfoList){
-                String url=moviePictureInfo.getMoviePictureUrl();
-                files.add(url);
-            }
-        }
-        movieShowInfoAll.setFiles(files);
+        List<MoviePictureInfoBase> moviePictureInfoBase=moviePictureInfoDao.queryMoviePictureInfoByMovieId(movieId);
+        movieShowInfoAll.setFiles(moviePictureInfoBase);
         Map<String,Object>map=new HashMap<>();
         map.put("list",movieShowInfoAll);
         return map;
+    }
+
+
+    @Transactional(rollbackFor = { Exception.class })
+    @RequestMapping(value="/updateMovieData", method= RequestMethod.POST)
+    public String updateMovieData(@RequestParam("files") MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        try{
+            //更新电影基本信息
+            String movieId=request.getParameter("movieId");
+            MovieBasicInfo movieBasicInfo=new MovieBasicInfo();
+            movieBasicInfo.setMovieId(movieId);
+            movieBasicInfo.setMovieName(request.getParameter("movieName"));
+            movieBasicInfo.setMovieEnglishName(request.getParameter("movieEnglishName"));
+            movieBasicInfo.setMovieCountry(request.getParameter("movieCountry"));
+            movieBasicInfo.setMovieDBScore(request.getParameter("movieDBScore"));
+            movieBasicInfo.setMovieShowTime(DateUtil.gmtToStringYMD(request.getParameter("movieShowTime")));
+            movieBasicInfo.setMovieContent(request.getParameter("movieContent"));
+            int n=movieBasicInfoDao.updateMovieBasicInfoByMovieId(movieBasicInfo);
+            if(n<0){
+                throw new Exception("更新电影基本信息失败") ;
+            }
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//就是这一句了，加上之后，如果doDbStuff2()抛了异常,     doDbStuff1()是会回滚的                                                                                   //doDbStuff1()是会回滚的
+            throw new Exception("更新电影失败") ;
+        }
+
+        return "success";
     }
 }

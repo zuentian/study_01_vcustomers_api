@@ -5,23 +5,28 @@
     <resultMap id="BaseResultMap" type="com.example.zuer02.entity.movie.MoviePictureInfo" >
         <id column="MOVIE_PICTURE_ID" property="moviePictureId" jdbcType="VARCHAR" />
         <result column="MOVIE_ID" property="movieId" jdbcType="VARCHAR" />
+        <result column="MOVIE_NAME" property="movieName" jdbcType="VARCHAR" />
         <result column="MOVIE_PICTURE_URL" property="moviePictureUrl" jdbcType="VARCHAR" />
     </resultMap>
-
+    <resultMap id="BaseResultPictureMap" type="com.example.zuer02.entity.movie.MoviePictureInfoBase" >
+        <result column="MOVIE_NAME" property="name" jdbcType="VARCHAR" />
+        <result column="MOVIE_PICTURE_URL" property="url" jdbcType="VARCHAR" />
+    </resultMap>
 
     <insert id="insertMoviePictureInfo" parameterType="com.example.zuer02.entity.movie.MoviePictureInfo">
         INSERT INTO MOVIE_PICTURE_INFO
-        (MOVIE_PICTURE_ID, MOVIE_ID, MOVIE_PICTURE_URL) VALUES
+        (MOVIE_PICTURE_ID, MOVIE_ID, MOVIE_NAME,MOVIE_PICTURE_URL) VALUES
         (
           #{moviePictureId,jdbcType=VARCHAR},
           #{movieId,jdbcType=VARCHAR},
+          #{movieName,jdbcType=VARCHAR},
           #{moviePictureUrl,jdbcType=VARCHAR}
         )
     </insert>
 
-    <select id="queryMoviePictureInfoByMovieId" parameterType="String" resultMap="BaseResultMap">
+    <select id="queryMoviePictureInfoByMovieId" parameterType="String" resultMap="BaseResultPictureMap">
 
-        select * from MOVIE_PICTURE_INFO
+        select MOVIE_NAME,MOVIE_PICTURE_URL from MOVIE_PICTURE_INFO
         where MOVIE_ID=#{movieId}
 
     </select>
