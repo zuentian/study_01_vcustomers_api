@@ -16,6 +16,9 @@ public class UploadFile {
 
 
     private static String uploadimagesPath;
+
+
+
     @Value("${local.upload.images}")
     private void setUploadimagesPath(String uploadimagesPath){
         UploadFile.uploadimagesPath=uploadimagesPath;
@@ -67,6 +70,10 @@ public class UploadFile {
         return "";
     }
 
+    //删除指定路径下的文件
+    public static void deleteFile(String path) {
 
+        //path=path.replace()
+    }
 
 }

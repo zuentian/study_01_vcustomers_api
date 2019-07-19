@@ -25,5 +25,9 @@
         where MOVIE_ID=#{movieId}
 
     </select>
+    <delete id="deleteMovieRelNameInfoByMovieId" parameterType="String" >
+        delete from MOVIE_REL_INFO
+        where MOVIE_ID=#{movieId}
+    </delete>
 
 </mapper>

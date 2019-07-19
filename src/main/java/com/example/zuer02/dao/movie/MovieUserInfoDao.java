@@ -10,4 +10,6 @@ public interface MovieUserInfoDao {
     int insertMovieUserInfo(MovieUserInfo movieUserInfo);
 
     MovieUserInfo queryMovieUserInfoByMovieIdAndUserId(@Param("movieId") String movieId, @Param("userId") String userId);
+
+    int updateMovieUserInfoByUserIdAndMovied(MovieUserInfo movieUserInfo);
 }

@@ -29,4 +29,16 @@
 
     </select>
 
+    <update id="updateMovieUserInfoByUserIdAndMovied" parameterType="com.example.zuer02.entity.movie.MovieUserInfo" >
+
+        update MOVIE_USER_INFO
+        set
+        MOVIE_IS_WATCH = #{movieIsWatch,jdbcType=VARCHAR},
+        MOVIE_WATCH_TIME =  #{movieWatchTime,jdbcType=VARCHAR}
+        where
+            MOVIE_ID=#{movieId}
+        AND USER_ID=#{userId}
+
+    </update>
+
 </mapper>

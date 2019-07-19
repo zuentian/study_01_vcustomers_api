@@ -11,4 +11,6 @@ public interface MovieRelNameInfoDao {
     int insertMovieRelNameInfo(MovieRelNameInfo movieRelNameInfo);
 
     List<MovieRelNameInfo> queryMovieRelNameInfoByMovieId(@Param("movieId") String movieId);
+
+    int deleteMovieRelNameInfoByMovieId(@Param("movieId") String movieId);
 }

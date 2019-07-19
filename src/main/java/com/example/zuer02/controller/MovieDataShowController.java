@@ -69,15 +69,8 @@ public class MovieDataShowController {
 
         try{
             //电影基本信息
-            MovieBasicInfo movieBasicInfo=new MovieBasicInfo();
             String movieId=UUID.randomUUID().toString();
-            movieBasicInfo.setMovieId(movieId);
-            movieBasicInfo.setMovieName(request.getParameter("movieName"));
-            movieBasicInfo.setMovieEnglishName(request.getParameter("movieEnglishName"));
-            movieBasicInfo.setMovieCountry(request.getParameter("movieCountry"));
-            movieBasicInfo.setMovieDBScore(request.getParameter("movieDBScore"));
-            movieBasicInfo.setMovieShowTime(DateUtil.gmtToStringYMD(request.getParameter("movieShowTime")));
-            movieBasicInfo.setMovieContent(request.getParameter("movieContent"));
+            MovieBasicInfo movieBasicInfo=getMovieBascInfo(movieId,request);
             //System.out.println(movieBasicInfo);
             movieBasicInfoDao.insertMovieBasicInfo(movieBasicInfo);
 
@@ -140,7 +133,8 @@ public class MovieDataShowController {
     @RequestMapping(value = "/queryMovieInfo",method = RequestMethod.POST)
     public Map<String,Object> queryMovieInfo(@RequestBody Map<String, Object> param,HttpServletRequest request) throws Exception{
 
-        Map<String,Object> resultMap=new HashMap<String,Object>();
+
+         Map<String,Object> resultMap=new HashMap<String,Object>();
 
         //此处PageHelper有个大坑，它无法对关联查询的sql正确分页，故不再采用
         try{
@@ -240,19 +234,63 @@ public class MovieDataShowController {
         try{
             //更新电影基本信息
             String movieId=request.getParameter("movieId");
-            MovieBasicInfo movieBasicInfo=new MovieBasicInfo();
-            movieBasicInfo.setMovieId(movieId);
-            movieBasicInfo.setMovieName(request.getParameter("movieName"));
-            movieBasicInfo.setMovieEnglishName(request.getParameter("movieEnglishName"));
-            movieBasicInfo.setMovieCountry(request.getParameter("movieCountry"));
-            movieBasicInfo.setMovieDBScore(request.getParameter("movieDBScore"));
-            movieBasicInfo.setMovieShowTime(DateUtil.gmtToStringYMD(request.getParameter("movieShowTime")));
-            movieBasicInfo.setMovieContent(request.getParameter("movieContent"));
+            MovieBasicInfo movieBasicInfo=getMovieBascInfo(movieId,request);
             int n=movieBasicInfoDao.updateMovieBasicInfoByMovieId(movieBasicInfo);
             if(n<0){
                 throw new Exception("更新电影基本信息失败") ;
             }
+            //更新用户观影信息
+            MovieUserInfo movieUserInfo=new MovieUserInfo();
+            movieUserInfo.setUserId(userId);//先写死
+            movieUserInfo.setMovieId(movieId);//
+            movieUserInfo.setMovieIsWatch(request.getParameter("movieIsWatch"));
+            movieUserInfo.setMovieWatchTime(DateUtil.gmtToStringYMD(request.getParameter("movieWatchTime")));
+            movieUserInfoDao.updateMovieUserInfoByUserIdAndMovied(movieUserInfo);
 
+            //更新电影类型
+            movieTypeInfoDao.deleteMovieIdTypeInfoByMovieId(movieId);
+            if(!StringUtils.isEmpty(request.getParameter("movieTypes"))){
+                String[] movieTypes= request.getParameter("movieTypes").split(",");
+                for (int i = 0; i < movieTypes.length; i++) {
+                    MovieTypeInfo movieTypeInfo=new MovieTypeInfo();
+                    movieTypeInfo.setMovieTypeId(UUID.randomUUID().toString());
+                    movieTypeInfo.setMovieId(movieId);
+                    movieTypeInfo.setMovieCode(movieTypes[i]);
+                    movieTypeInfoDao.insertMovieTypeInfo(movieTypeInfo);
+                }
+            }
+
+
+            //电影相关人物信息
+            movieRelNameInfoDao.deleteMovieRelNameInfoByMovieId(movieId);
+            if(!StringUtils.isEmpty(request.getParameter("movieRelNames"))){
+                String[] movieRelNames=request.getParameter("movieRelNames").split(",");
+                for (int i = 0; i <movieRelNames.length ; i++) {
+                    MovieRelNameInfo movieRelNameInfo=new MovieRelNameInfo();
+                    movieRelNameInfo.setMovieRelNameId(UUID.randomUUID().toString());
+                    movieRelNameInfo.setMovieId(movieId);
+                    movieRelNameInfo.setMovieRelName(movieRelNames[i]);
+                    //System.out.println(movieRelNameInfo);
+                    movieRelNameInfoDao.insertMovieRelNameInfo(movieRelNameInfo);
+                }
+            }
+
+            //更新电影海报和剧照
+            List<MoviePictureInfoBase> moviePictureInfoBaseList =moviePictureInfoDao.queryMoviePictureInfoByMovieId(movieId);
+            for (MoviePictureInfoBase moviePictureInfoBase:moviePictureInfoBaseList) {
+                String path=moviePictureInfoBase.getUrl();
+                path=path.replace(File.separatorChar+vueIp,"");
+                UploadFile.deleteFile(path);
+            }
+            for(MultipartFile file:files){
+                MoviePictureInfo moviePictureInfo=new MoviePictureInfo();
+                String moviePictureId=UUID.randomUUID().toString();
+                moviePictureInfo.setMoviePictureId(moviePictureId);
+                moviePictureInfo.setMovieId(movieId);
+                moviePictureInfo.setMovieName(file.getOriginalFilename());
+                //moviePictureInfo.setMoviePictureUrl(File.separator+vueIp+ File.separator+UploadFile.uploadMultipartFile(file,moviePictureId));
+                moviePictureInfoDao.insertMoviePictureInfo(moviePictureInfo);
+            }
         }catch (Exception e) {
             e.printStackTrace();
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//就是这一句了，加上之后，如果doDbStuff2()抛了异常,     doDbStuff1()是会回滚的                                                                                   //doDbStuff1()是会回滚的
@@ -261,4 +299,18 @@ public class MovieDataShowController {
 
         return "success";
     }
+
+    private MovieBasicInfo getMovieBascInfo(String movieId,HttpServletRequest request){
+        MovieBasicInfo movieBasicInfo=new MovieBasicInfo();
+        movieBasicInfo.setMovieId(movieId);
+        movieBasicInfo.setMovieName(request.getParameter("movieName"));
+        movieBasicInfo.setMovieEnglishName(request.getParameter("movieEnglishName"));
+        movieBasicInfo.setMovieCountry(request.getParameter("movieCountry"));
+        movieBasicInfo.setMovieDBScore(request.getParameter("movieDBScore"));
+        movieBasicInfo.setMovieShowTime(DateUtil.gmtToStringYMD(request.getParameter("movieShowTime")));
+        movieBasicInfo.setMovieContent(request.getParameter("movieContent"));
+        return movieBasicInfo;
+    }
+
+
 }
