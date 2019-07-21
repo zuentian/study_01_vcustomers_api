@@ -1,5 +1,8 @@
 package com.example.zuer02.utils;
 
+import com.example.zuer02.controller.UserLoginController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -7,6 +10,7 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -14,7 +18,7 @@ import java.util.Date;
 @PropertySource(value = {"classpath:person.properties" })
 public class UploadFile {
 
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(UploadFile.class);
     private static String uploadimagesPath;
 
 
@@ -71,9 +75,21 @@ public class UploadFile {
     }
 
     //删除指定路径下的文件
-    public static void deleteFile(String path) {
+    public static boolean deleteFile(String path) throws  FileNotFoundException{
 
-        //path=path.replace()
+        path=ResourceUtils.getURL("classpath:").getPath()+"static"+path;
+        File delFile = new File(path);
+        if(delFile.isFile() && delFile.exists()) {
+            delFile.delete();
+            LOGGER.info("删除文件成功");
+            return true;
+        }else {
+            LOGGER.info("没有该文件，删除失败");
+            return false;
+        }
+
     }
+
+
 
 }

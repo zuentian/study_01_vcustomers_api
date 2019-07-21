@@ -84,7 +84,8 @@
         MOVIE_COUNTRY = #{movieCountry,jdbcType=VARCHAR},
         MOVIE_DB_SCORE = #{movieDBScore,jdbcType=VARCHAR},
         MOVIE_CONTENT = #{movieContent,jdbcType=CLOB},
-        MOVIE_SHOW_TIME = #{movieShowTime,jdbcType=VARCHAR}
+        MOVIE_SHOW_TIME = #{movieShowTime,jdbcType=VARCHAR},
+        ALT_DATE = sysdate
         where
         MOVIE_ID=#{movieId,jdbcType=VARCHAR}
     </update>

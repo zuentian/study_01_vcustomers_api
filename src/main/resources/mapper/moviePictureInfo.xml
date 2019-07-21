@@ -24,11 +24,51 @@
         )
     </insert>
 
-    <select id="queryMoviePictureInfoByMovieId" parameterType="String" resultMap="BaseResultPictureMap">
+    <select id="queryMoviePictureInfoByMovieId" parameterType="String" resultMap="BaseResultMap">
 
-        select MOVIE_NAME,MOVIE_PICTURE_URL from MOVIE_PICTURE_INFO
-        where MOVIE_ID=#{movieId}
+        select * from MOVIE_PICTURE_INFO
+        where MOVIE_ID=#{movieId,jdbcType=VARCHAR}
 
     </select>
+    <select id="queryMoviePictureInfoBaseByMovieId" parameterType="String" resultMap="BaseResultPictureMap">
 
+        select MOVIE_NAME,MOVIE_PICTURE_URL from MOVIE_PICTURE_INFO
+        where MOVIE_ID=#{movieId,jdbcType=VARCHAR}
+
+    </select>
+    <select id="queryMoviePictureInfoBaseCountByMovieId" parameterType="String" resultType="Integer">
+
+        select count(*) from MOVIE_PICTURE_INFO
+        where MOVIE_ID=#{movieId,jdbcType=VARCHAR}
+
+    </select>
+    <select id="queryMoviePictureInfoBaseByMovieIdShow5" parameterType="String" resultMap="BaseResultPictureMap">
+
+        SELECT * FROM (select MOVIE_NAME,MOVIE_PICTURE_URL,MOVIE_ID,ROWNUM AS RM from MOVIE_PICTURE_INFO
+         where MOVIE_ID=#{movieId,jdbcType=VARCHAR}
+        ) T1
+
+        where T1.RM BETWEEN 1 AND 5
+    </select>
+
+    <delete id="deleteMoviePictureInfoByMoviePictureId" parameterType="String">
+        delete from MOVIE_PICTURE_INFO
+        where
+        MOVIE_PICTURE_ID=#{moviePictureId,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="queryMoviePictureInfoMapByMovieId" parameterType="java.util.Map" resultMap="BaseResultMap">
+
+        select * from MOVIE_PICTURE_INFO
+        where
+        MOVIE_ID=#{movieId,jdbcType=VARCHAR}
+
+        <if test="moviePictureNotDelete!=null and moviePictureNotDelete.length!=0">
+            and MOVIE_PICTURE_URL not in
+            <foreach collection="moviePictureNotDelete" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
+    </select>
 </mapper>

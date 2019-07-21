@@ -14,4 +14,12 @@
         from MOVIE_TYPE
     </select>
 
+    <select id="queryMovieTypeByMovieCode" parameterType="String" resultMap="BaseResultMap">
+
+        select
+        *
+        from MOVIE_TYPE
+        where TYPE_CODE=#{typeCode,jdbcType=VARCHAR}
+    </select>
+
 </mapper>

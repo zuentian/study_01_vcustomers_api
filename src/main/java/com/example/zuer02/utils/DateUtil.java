@@ -2,6 +2,7 @@ package com.example.zuer02.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -57,6 +58,14 @@ public class DateUtil {
             e.printStackTrace();
             throw new RuntimeException("日期转换异常");
         }
+    }
+
+    public static  String  getYear(Date date){
+
+        Calendar cal=Calendar.getInstance();
+        cal.setTime(date);
+        int year=cal.get(Calendar.YEAR);
+        return  year+"";
     }
 
     public static void main(String[] args) {

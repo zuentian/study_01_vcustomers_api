@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.crypto.Data;
 import java.io.File;
 import java.util.*;
 
@@ -110,15 +111,18 @@ public class MovieDataShowController {
                 }
             }
             //电影海报和剧照
-            for(MultipartFile file:files){
-                MoviePictureInfo moviePictureInfo=new MoviePictureInfo();
-                String moviePictureId=UUID.randomUUID().toString();
-                moviePictureInfo.setMoviePictureId(moviePictureId);
-                moviePictureInfo.setMovieId(movieId);
-                moviePictureInfo.setMovieName(file.getOriginalFilename());
-                moviePictureInfo.setMoviePictureUrl(File.separator+vueIp+ File.separator+UploadFile.uploadMultipartFile(file,moviePictureId));
-                moviePictureInfoDao.insertMoviePictureInfo(moviePictureInfo);
+            if(files!=null&&files.length>0){
+                for(MultipartFile file:files){
+                    MoviePictureInfo moviePictureInfo=new MoviePictureInfo();
+                    String moviePictureId=UUID.randomUUID().toString();
+                    moviePictureInfo.setMoviePictureId(moviePictureId);
+                    moviePictureInfo.setMovieId(movieId);
+                    moviePictureInfo.setMovieName(file.getOriginalFilename());
+                    moviePictureInfo.setMoviePictureUrl(File.separator+vueIp+ File.separator+UploadFile.uploadMultipartFile(file,moviePictureId));
+                    moviePictureInfoDao.insertMoviePictureInfo(moviePictureInfo);
+                }
             }
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -219,7 +223,7 @@ public class MovieDataShowController {
             movieShowInfoAll.setMovieRelNames(movieRelNames);
         }
 
-        List<MoviePictureInfoBase> moviePictureInfoBase=moviePictureInfoDao.queryMoviePictureInfoByMovieId(movieId);
+        List<MoviePictureInfoBase> moviePictureInfoBase=moviePictureInfoDao.queryMoviePictureInfoBaseByMovieId(movieId);
         movieShowInfoAll.setFiles(moviePictureInfoBase);
         Map<String,Object>map=new HashMap<>();
         map.put("list",movieShowInfoAll);
@@ -261,7 +265,7 @@ public class MovieDataShowController {
             }
 
 
-            //电影相关人物信息
+            //电影相关人物信息moviePictureNotDelete
             movieRelNameInfoDao.deleteMovieRelNameInfoByMovieId(movieId);
             if(!StringUtils.isEmpty(request.getParameter("movieRelNames"))){
                 String[] movieRelNames=request.getParameter("movieRelNames").split(",");
@@ -276,25 +280,46 @@ public class MovieDataShowController {
             }
 
             //更新电影海报和剧照
-            List<MoviePictureInfoBase> moviePictureInfoBaseList =moviePictureInfoDao.queryMoviePictureInfoByMovieId(movieId);
-            for (MoviePictureInfoBase moviePictureInfoBase:moviePictureInfoBaseList) {
-                String path=moviePictureInfoBase.getUrl();
-                path=path.replace(File.separatorChar+vueIp,"");
-                UploadFile.deleteFile(path);
+            Map<String,Object> map=new HashMap<>();
+            if(!StringUtils.isEmpty(request.getParameter("moviePictureNotDelete"))){
+                String[] moviePictureNotDelete=request.getParameter("moviePictureNotDelete").split(",");
+                if(moviePictureNotDelete.length>0){
+                    map.put("moviePictureNotDelete",moviePictureNotDelete);
+                }
+
             }
-            for(MultipartFile file:files){
-                MoviePictureInfo moviePictureInfo=new MoviePictureInfo();
-                String moviePictureId=UUID.randomUUID().toString();
-                moviePictureInfo.setMoviePictureId(moviePictureId);
-                moviePictureInfo.setMovieId(movieId);
-                moviePictureInfo.setMovieName(file.getOriginalFilename());
-                //moviePictureInfo.setMoviePictureUrl(File.separator+vueIp+ File.separator+UploadFile.uploadMultipartFile(file,moviePictureId));
-                moviePictureInfoDao.insertMoviePictureInfo(moviePictureInfo);
+            map.put("movieId",movieId);
+            //List<MoviePictureInfo> moviePictureInfoList =moviePictureInfoDao.queryMoviePictureInfoByMovieId(movieId);
+            List<MoviePictureInfo> moviePictureInfoList =moviePictureInfoDao.queryMoviePictureInfoMapByMovieId(map);
+            if(moviePictureInfoList!=null&&moviePictureInfoList.size()>0){
+                for (MoviePictureInfo moviePictureInfo:moviePictureInfoList) {
+                    String path=moviePictureInfo.getMoviePictureUrl();
+                    path=path.replace(File.separatorChar+vueIp,"");
+                    boolean flag=UploadFile.deleteFile(path);
+                    if(flag){
+                        moviePictureInfoDao.deleteMoviePictureInfoByMoviePictureId(moviePictureInfo.getMoviePictureId());
+                    }else{
+                        throw new Exception("更新电影图片时删除原图片失败") ;
+                    }
+                }
             }
+            if(files!=null&&files.length>0){
+                for(MultipartFile file:files){
+                    MoviePictureInfo moviePictureInfo=new MoviePictureInfo();
+                    String moviePictureId=UUID.randomUUID().toString();
+                    moviePictureInfo.setMoviePictureId(moviePictureId);
+                    moviePictureInfo.setMovieId(movieId);
+                    moviePictureInfo.setMovieName(file.getOriginalFilename());
+                    moviePictureInfo.setMoviePictureUrl(File.separator+vueIp+ File.separator+UploadFile.uploadMultipartFile(file,moviePictureId));
+                    moviePictureInfoDao.insertMoviePictureInfo(moviePictureInfo);
+                }
+            }
+
+
         }catch (Exception e) {
             e.printStackTrace();
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//就是这一句了，加上之后，如果doDbStuff2()抛了异常,     doDbStuff1()是会回滚的                                                                                   //doDbStuff1()是会回滚的
-            throw new Exception("更新电影失败") ;
+            throw new Exception(e.getMessage()) ;
         }
 
         return "success";
@@ -312,5 +337,59 @@ public class MovieDataShowController {
         return movieBasicInfo;
     }
 
+    @Transactional(rollbackFor = { Exception.class })
+    @RequestMapping(value="/queryMoviDetailByMovieId", method=RequestMethod.GET)
+    public Map<String,Object> queryMoviDetailByMovieId(@RequestParam("movieId") String movieId) {
+        Map<String,Object> resultMap=new HashMap<>();
+        MovieBasicInfo movieBasicInfo=movieBasicInfoDao.queryMovieInfoByMovieId(movieId);
+        resultMap.put("MovieBasicInfo",movieBasicInfo);
+        String movieShowTime=movieBasicInfo.getMovieShowTime();
+        String titleMovieYear=DateUtil.getYear(DateUtil.StringYMDToDate(movieShowTime));
+        resultMap.put("titleMovieYear",titleMovieYear);
+        double movieDBScoreValue= Double.parseDouble(movieBasicInfo.getMovieDBScore());
+        resultMap.put("movieDBScoreValue",movieDBScoreValue);
 
+        List<MovieTypeInfo> movieTypeInfoList=movieTypeInfoDao.queryMovieTypeInfoByMovieId(movieId);
+        String movieTypeAll="";
+        if(movieTypeInfoList!=null&&movieTypeInfoList.size()>0){
+            for (MovieTypeInfo movieTypeInfo:movieTypeInfoList) {
+                MovieType movieType=movieTypeDao.queryMovieTypeByMovieCode(movieTypeInfo.getMovieCode());
+                movieTypeAll+=movieType.getTypeName()+" / ";
+            }
+        }
+        movieTypeAll=movieTypeAll.substring(0,movieTypeAll.lastIndexOf("/")).trim();
+        resultMap.put("movieTypeAll",movieTypeAll);
+
+        List<MovieRelNameInfo> movieRelNameInfoList= movieRelNameInfoDao.queryMovieRelNameInfoByMovieId(movieId);
+
+        List<MovieRelNameInfo> movieRelPersons=new ArrayList<MovieRelNameInfo>();
+        if(movieRelNameInfoList!=null&&movieRelNameInfoList.size()>0){
+            for (MovieRelNameInfo movieRelName:movieRelNameInfoList) {
+                movieRelPersons.add(movieRelName);
+            }
+        }
+        resultMap.put("movieRelPersons",movieRelPersons);
+
+        MovieUserInfo movieUserInfo=movieUserInfoDao.queryMovieUserInfoByMovieIdAndUserId(movieId,userId);
+        if(movieUserInfo!=null){
+            resultMap.put("movieIsWatch","true".equals(movieUserInfo.getMovieIsWatch())?true:false);
+            resultMap.put("movieWatchTime",movieUserInfo.getMovieWatchTime());
+        }
+        int count=moviePictureInfoDao.queryMoviePictureInfoBaseCountByMovieId(movieId);
+        resultMap.put("moviePictureInfoBaseCount",count);
+        List<MoviePictureInfoBase> moviePictureInfoBase=moviePictureInfoDao.queryMoviePictureInfoBaseByMovieIdShow5(movieId);
+        resultMap.put("moviePictureInfoBase",moviePictureInfoBase);
+        return resultMap;
+    }
+
+    @Transactional(rollbackFor = { Exception.class })
+    @RequestMapping(value="/queryMoviePictureDetail", method=RequestMethod.GET)
+    public Map<String,Object> queryMoviePictureDetail(@RequestParam("movieId") String movieId) {
+        Map<String,Object> resultMap=new HashMap<>();
+        List<MoviePictureInfoBase> moviePictureInfoBase=moviePictureInfoDao.queryMoviePictureInfoBaseByMovieId(movieId);
+        resultMap.put("moviePictureInfoBase",moviePictureInfoBase);
+        MovieBasicInfo movieBasicInfo=movieBasicInfoDao.queryMovieInfoByMovieId(movieId);
+        resultMap.put("movieName",movieBasicInfo.getMovieName());
+        return resultMap;
+    }
 }
