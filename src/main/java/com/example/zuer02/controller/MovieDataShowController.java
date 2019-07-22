@@ -2,9 +2,12 @@ package com.example.zuer02.controller;
 
 
 import com.example.zuer02.dao.movie.*;
+import com.example.zuer02.entity.User;
 import com.example.zuer02.entity.movie.*;
 import com.example.zuer02.utils.DateUtil;
 import com.example.zuer02.utils.UploadFile;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -383,11 +386,16 @@ public class MovieDataShowController {
     }
 
     @Transactional(rollbackFor = { Exception.class })
-    @RequestMapping(value="/queryMoviePictureDetail", method=RequestMethod.GET)
-    public Map<String,Object> queryMoviePictureDetail(@RequestParam("movieId") String movieId) {
+    @RequestMapping(value="/queryMoviePictureDetail", method=RequestMethod.POST)
+    public Map<String,Object> queryMoviePictureDetail(@RequestBody Map<String, Object> param) {
+        String movieId=String.valueOf(param.get("movieId"));
+        int currentPage=Integer.valueOf( param.get("currentPage").toString());
+        int pageSize=Integer.valueOf(param.get("pageSize").toString());
+        PageHelper.startPage(currentPage,pageSize);
         Map<String,Object> resultMap=new HashMap<>();
         List<MoviePictureInfoBase> moviePictureInfoBase=moviePictureInfoDao.queryMoviePictureInfoBaseByMovieId(movieId);
-        resultMap.put("moviePictureInfoBase",moviePictureInfoBase);
+        PageInfo<MoviePictureInfoBase> pageInfo=new PageInfo<>(moviePictureInfoBase);
+        resultMap.put("pageInfo",pageInfo);
         MovieBasicInfo movieBasicInfo=movieBasicInfoDao.queryMovieInfoByMovieId(movieId);
         resultMap.put("movieName",movieBasicInfo.getMovieName());
         return resultMap;
