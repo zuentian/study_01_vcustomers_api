@@ -12,5 +12,6 @@ public interface MovieTypeInfoDao {
 
     List<MovieTypeInfo> queryMovieTypeInfoByMovieId(@Param("movieId") String movieId);
 
-    int deleteMovieIdTypeInfoByMovieId(@Param("movieId") String movieId);
+    int deleteMovieTypeInfoByMovieId(@Param("movieId") String movieId);
+
 }

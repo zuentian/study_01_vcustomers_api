@@ -255,7 +255,7 @@ public class MovieDataShowController {
             movieUserInfoDao.updateMovieUserInfoByUserIdAndMovied(movieUserInfo);
 
             //更新电影类型
-            movieTypeInfoDao.deleteMovieIdTypeInfoByMovieId(movieId);
+            movieTypeInfoDao.deleteMovieTypeInfoByMovieId(movieId);
             if(!StringUtils.isEmpty(request.getParameter("movieTypes"))){
                 String[] movieTypes= request.getParameter("movieTypes").split(",");
                 for (int i = 0; i < movieTypes.length; i++) {
@@ -399,5 +399,41 @@ public class MovieDataShowController {
         MovieBasicInfo movieBasicInfo=movieBasicInfoDao.queryMovieInfoByMovieId(movieId);
         resultMap.put("movieName",movieBasicInfo.getMovieName());
         return resultMap;
+    }
+
+    @Transactional(rollbackFor = { Exception.class })
+    @RequestMapping(value="/deleteMoviDetailByMovieId", method=RequestMethod.POST)
+    public String deleteMoviDetailByMovieId(@RequestBody Map<String, Object> param) throws Exception {
+        String movieId=String.valueOf(param.get("movieId"));
+        try{
+            //删除基本信息
+            movieBasicInfoDao.deleteMovieBasicInfoByMovieId(movieId);
+            //删除用户观影信息
+            movieUserInfoDao.deleteMovieUserInfoByMovieIdAndUserId(movieId,userId);
+            //删除电影类型(多笔删除）
+            movieTypeInfoDao.deleteMovieTypeInfoByMovieId(movieId);
+            //删除电影相关人物(多笔删除)
+            movieRelNameInfoDao.deleteMovieRelNameInfoByMovieId(movieId);
+            //删除电影图片
+            List<MoviePictureInfo> moviePictureInfoList =moviePictureInfoDao.queryMoviePictureInfoByMovieId(movieId);
+            if(moviePictureInfoList!=null&&moviePictureInfoList.size()>0){
+                for (MoviePictureInfo moviePictureInfo:moviePictureInfoList) {
+                    String path=moviePictureInfo.getMoviePictureUrl();
+                    path=path.replace(File.separatorChar+vueIp,"");
+                    boolean flag=UploadFile.deleteFile(path);
+                    if(flag){
+                        moviePictureInfoDao.deleteMoviePictureInfoByMoviePictureId(moviePictureInfo.getMoviePictureId());
+                    }else{
+                        throw new Exception("删除原图片失败") ;
+                    }
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//就是这一句了，加上之后，如果doDbStuff2()抛了异常,     doDbStuff1()是会回滚的                                                                                   //doDbStuff1()是会回滚的
+            throw new Exception(e.getMessage()) ;
+         }
+
+        return "success";
     }
 }

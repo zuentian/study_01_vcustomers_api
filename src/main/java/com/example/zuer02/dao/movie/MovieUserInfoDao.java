@@ -12,4 +12,6 @@ public interface MovieUserInfoDao {
     MovieUserInfo queryMovieUserInfoByMovieIdAndUserId(@Param("movieId") String movieId, @Param("userId") String userId);
 
     int updateMovieUserInfoByUserIdAndMovied(MovieUserInfo movieUserInfo);
+
+    int deleteMovieUserInfoByMovieIdAndUserId(@Param("movieId") String movieId, @Param("userId") String userId);
 }

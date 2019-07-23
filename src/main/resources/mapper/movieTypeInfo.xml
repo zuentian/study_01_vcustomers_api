@@ -27,7 +27,7 @@
 
     </select>
 
-    <delete id="deleteMovieIdTypeInfoByMovieId" parameterType="String">
+    <delete id="deleteMovieTypeInfoByMovieId" parameterType="String">
         delete from MOVIE_TYPE_INFO
         where MOVIE_ID= #{movieId}
     </delete>
