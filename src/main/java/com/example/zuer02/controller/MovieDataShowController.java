@@ -140,6 +140,15 @@ public class MovieDataShowController {
     @RequestMapping(value = "/queryMovieInfo",method = RequestMethod.POST)
     public Map<String,Object> queryMovieInfo(@RequestBody Map<String, Object> param,HttpServletRequest request) throws Exception{
 
+        String movieCountry=(String) (param.get("movieCountry"));
+        String movieDBScoreEnd=(String) (param.get("movieDBScoreEnd"));
+        String movieDBScoreStart=(String) (param.get("movieDBScoreStart"));
+        String movieIsWatch=(String) (param.get("movieIsWatch"));
+        String movieName=(String) (param.get("movieName"));
+        String movieShowTimeStart= (String) param.get("movieShowTimeStart");
+        String movieShowTimeEnd= (String) param.get("movieShowTimeEnd");
+        String movieWatchTimeStart=(String) (param.get("movieWatchTimeStart"));
+        String movieWatchTimeEnd=(String) (param.get("movieWatchTimeEnd"));
 
          Map<String,Object> resultMap=new HashMap<String,Object>();
 
@@ -158,6 +167,16 @@ public class MovieDataShowController {
             map.put("userId",userId);
             map.put("start",start);
             map.put("end",end);
+            map.put("movieCountry",(String)param.get("movieCountry"));
+            map.put("movieDBScoreEnd",(String)param.get("movieDBScoreEnd"));
+            map.put("movieDBScoreStart",(String)param.get("movieDBScoreStart"));
+            map.put("movieIsWatch",(String)param.get("movieIsWatch"));
+            map.put("movieName",(String)param.get("movieName"));
+            map.put("movieShowTimeStart",(String)param.get("movieShowTimeStart"));
+            map.put("movieShowTimeEnd",(String)param.get("movieShowTimeEnd"));
+            map.put("movieWatchTimeStart",(String)param.get("movieWatchTimeStart"));
+            map.put("movieWatchTimeEnd",(String)param.get("movieWatchTimeEnd"));
+
             int count=movieBasicInfoDao.queryMovieInfoByUserIdCount(map);
             List<MovieInfo> movieInfoList=null;
             if(count>0){

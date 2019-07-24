@@ -55,6 +55,35 @@
         u.MOVIE_IS_WATCH MOVIE_IS_WATCH
         from MOVIE_BASIC_INFO m
         left join MOVIE_USER_INFO u on m.MOVIE_ID=u.MOVIE_ID AND u.USER_ID = #{userId}
+        <where>
+            <if test="movieCountry!=null and movieCountry !=''">
+              and  m.MOVIE_COUNTRY= #{movieCountry}
+            </if>
+            <if test="movieName!=null and movieName !=''">
+                and  m.MOVIE_NAME= #{movieName}
+            </if>
+            <if test="movieIsWatch!=null and movieIsWatch !=''">
+                and  u.MOVIE_IS_WATCH= #{movieIsWatch}
+            </if>
+            <if test="movieDBScoreStart!=null and movieDBScoreStart !=''">
+                and  m.MOVIE_DB_SCORE &gt;= #{movieDBScoreStart}
+            </if>
+            <if test="movieDBScoreEnd!=null and movieDBScoreEnd !=''">
+                and  m.MOVIE_DB_SCORE &lt;#{movieDBScoreEnd}
+            </if>
+            <if test="movieShowTimeStart!=null and movieShowTimeStart !=''">
+                and  m.MOVIE_SHOW_TIME &gt;=#{movieShowTimeStart}
+            </if>
+            <if test="movieShowTimeEnd!=null and movieShowTimeEnd !=''">
+                and  m.MOVIE_SHOW_TIME &lt;#{movieShowTimeEnd}
+            </if>
+            <if test="movieWatchTimeStart!=null and movieWatchTimeStart !=''">
+                and  u.MOVIE_WATCH_TIME &gt;=#{movieWatchTimeStart}
+            </if>
+            <if test="movieWatchTimeEnd!=null and movieWatchTimeEnd !=''">
+                and  u.MOVIE_WATCH_TIME &lt;#{movieWatchTimeEnd}
+            </if>
+        </where>
         order by m.ALT_DATE desc
         ) TAB ) TAB1
         WHERE
@@ -66,6 +95,35 @@
         count(*)
         from MOVIE_BASIC_INFO m
         left join MOVIE_USER_INFO u on m.MOVIE_ID=u.MOVIE_ID AND u.USER_ID = #{userId}
+        <where>
+            <if test="movieCountry!=null and movieCountry !=''">
+                and  m.MOVIE_COUNTRY= #{movieCountry}
+            </if>
+            <if test="movieName!=null and movieName !=''">
+                and  m.MOVIE_NAME= #{movieName}
+            </if>
+            <if test="movieIsWatch!=null and movieIsWatch !=''">
+                and  u.MOVIE_IS_WATCH= #{movieIsWatch}
+            </if>
+            <if test="movieDBScoreStart!=null and movieDBScoreStart !=''">
+                and  m.MOVIE_DB_SCORE &gt;= #{movieDBScoreStart}
+            </if>
+            <if test="movieDBScoreEnd!=null and movieDBScoreEnd !=''">
+                and  m.MOVIE_DB_SCORE &lt;#{movieDBScoreEnd}
+            </if>
+            <if test="movieShowTimeStart!=null and movieShowTimeStart !=''">
+                and  m.MOVIE_SHOW_TIME &gt;=#{movieShowTimeStart}
+            </if>
+            <if test="movieShowTimeEnd!=null and movieShowTimeEnd !=''">
+                and  m.MOVIE_SHOW_TIME &lt;#{movieShowTimeEnd}
+            </if>
+            <if test="movieWatchTimeStart!=null and movieWatchTimeStart !=''">
+                and  u.MOVIE_WATCH_TIME &gt;=#{movieWatchTimeStart}
+            </if>
+            <if test="movieWatchTimeEnd!=null and movieWatchTimeEnd !=''">
+                and  u.MOVIE_WATCH_TIME &lt;#{movieWatchTimeEnd}
+            </if>
+        </where>
 
     </select>
     <select id="queryMovieInfoByMovieId" parameterType="String" resultMap="BaseResultMap">
