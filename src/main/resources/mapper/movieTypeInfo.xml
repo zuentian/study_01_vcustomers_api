@@ -7,7 +7,10 @@
         <result column="MOVIE_ID" property="movieId" jdbcType="VARCHAR" />
         <result column="MOVIE_CODE" property="movieCode" jdbcType="VARCHAR" />
     </resultMap>
-
+    <resultMap id="BaseResultTypeCountMap" type="com.example.zuer02.entity.movieReport.MovieTypeCount" >
+        <result column="VALUE" property="value" jdbcType="NUMERIC" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+    </resultMap>
 
     <insert id="insertMovieTypeInfo" parameterType="com.example.zuer02.entity.movie.MovieTypeInfo">
         INSERT INTO MOVIE_TYPE_INFO
@@ -31,4 +34,10 @@
         delete from MOVIE_TYPE_INFO
         where MOVIE_ID= #{movieId}
     </delete>
+
+    <select id="getMovieTypeCount"  resultMap="BaseResultTypeCountMap">
+        select TINFO.count as value,T.TYPE_NAME as name from
+        (select count(MOVIE_CODE) as count,MOVIE_CODE from MOVIE_TYPE_INFO group by MOVIE_CODE) TINFO
+        LEFT join MOVIE_TYPE T  on TINFO.MOVIE_CODE=T.TYPE_CODE
+    </select>
 </mapper>
