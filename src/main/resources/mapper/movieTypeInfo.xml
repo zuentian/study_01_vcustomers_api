@@ -7,7 +7,7 @@
         <result column="MOVIE_ID" property="movieId" jdbcType="VARCHAR" />
         <result column="MOVIE_CODE" property="movieCode" jdbcType="VARCHAR" />
     </resultMap>
-    <resultMap id="BaseResultTypeCountMap" type="com.example.zuer02.entity.movieReport.CountInfo" >
+    <resultMap id="BaseResultMapCountInfo" type="com.example.zuer02.entity.movieReport.CountInfo" >
         <result column="VALUE" property="value" jdbcType="NUMERIC" />
         <result column="NAME" property="name" jdbcType="VARCHAR" />
     </resultMap>
@@ -35,7 +35,7 @@
         where MOVIE_ID= #{movieId}
     </delete>
 
-    <select id="getMovieTypeCount"  resultMap="BaseResultTypeCountMap">
+    <select id="getMovieTypeCount"  resultMap="BaseResultMapCountInfo">
         select TINFO.count as value,T.TYPE_NAME as name  from
         (select count(MOVIE_CODE) as count,MOVIE_CODE from MOVIE_TYPE_INFO group by MOVIE_CODE) TINFO
         LEFT join MOVIE_TYPE T  on TINFO.MOVIE_CODE=T.TYPE_CODE order by TINFO.count desc

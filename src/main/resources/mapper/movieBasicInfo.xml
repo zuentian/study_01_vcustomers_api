@@ -23,7 +23,10 @@
         <result column="MOVIE_IS_WATCH" property="movieIsWatch" jdbcType="VARCHAR" />
         <result column="MOVIE_WATCH_TIME" property="movieWatchTime" jdbcType="VARCHAR" />
     </resultMap>
-
+    <resultMap id="BaseResultMapCountInfo" type="com.example.zuer02.entity.movieReport.CountInfo" >
+        <result column="VALUE" property="value" jdbcType="NUMERIC" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+    </resultMap>
     <insert id="insertMovieBasicInfo" parameterType="com.example.zuer02.entity.movie.MovieBasicInfo">
         INSERT INTO MOVIE_BASIC_INFO
         (MOVIE_ID, MOVIE_NAME, MOVIE_ENGLISH_NAME, MOVIE_COUNTRY, MOVIE_DB_SCORE, MOVIE_CONTENT, MOVIE_SHOW_TIME,CRT_DATE,ALT_DATE) VALUES
@@ -153,7 +156,7 @@
     </delete>
 
 
-    <select id="getMovieCountryCount" resultMap="">
-        select count(MOVIE_COUNTRY) as count, MOVIE_COUNTRY from MOVIE_BASIC_INFO group by MOVIE_COUNTRY order by count desc
+    <select id="getMovieCountryCount" resultMap="BaseResultMapCountInfo">
+        select count(MOVIE_COUNTRY) as VALUE, MOVIE_COUNTRY as name from MOVIE_BASIC_INFO group by MOVIE_COUNTRY order by VALUE desc
     </select>
 </mapper>

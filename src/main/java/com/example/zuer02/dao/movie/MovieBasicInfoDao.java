@@ -2,6 +2,7 @@ package com.example.zuer02.dao.movie;
 
 import com.example.zuer02.entity.movie.MovieBasicInfo;
 import com.example.zuer02.entity.movie.MovieInfo;
+import com.example.zuer02.entity.movieReport.CountInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -22,4 +23,6 @@ public interface MovieBasicInfoDao {
     int updateMovieBasicInfoByMovieId(MovieBasicInfo movieInfo );
 
     int deleteMovieBasicInfoByMovieId(@Param("movieId")String movieId);
+
+    List<CountInfo> getMovieCountryCount();
 }

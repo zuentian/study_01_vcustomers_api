@@ -1,5 +1,6 @@
 package com.example.zuer02.controller;
 
+import com.example.zuer02.dao.movie.MovieBasicInfoDao;
 import com.example.zuer02.dao.movie.MovieTypeInfoDao;
 import com.example.zuer02.entity.movieReport.CountInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class MovieDataReportController {
 
     @Autowired
     MovieTypeInfoDao movieTypeInfoDao;
+
+    @Autowired
+    MovieBasicInfoDao movieBasicInfoDao;
 
 
     @Transactional(rollbackFor = {Exception.class})
@@ -60,7 +64,9 @@ public class MovieDataReportController {
     @RequestMapping(value = "/getMovieCountryCount", method = RequestMethod.POST)
     public Map<String, Object> getMovieCountryCount(@RequestBody Map<String, Object> param) throws Exception {//电影地区报告
 
-
-        return null;
+        Map<String,Object> resultMap=new HashMap<>();
+        List<CountInfo> movieTypeCountList = movieBasicInfoDao.getMovieCountryCount();
+        resultMap.put("data",movieTypeCountList);
+        return resultMap;
     }
 }
