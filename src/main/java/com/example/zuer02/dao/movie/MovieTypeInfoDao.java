@@ -1,7 +1,7 @@
 package com.example.zuer02.dao.movie;
 
 import com.example.zuer02.entity.movie.MovieTypeInfo;
-import com.example.zuer02.entity.movieReport.MovieTypeCount;
+import com.example.zuer02.entity.movieReport.CountInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,5 +15,5 @@ public interface MovieTypeInfoDao {
 
     int deleteMovieTypeInfoByMovieId(@Param("movieId") String movieId);
 
-    List<MovieTypeCount> getMovieTypeCount();
+    List<CountInfo> getMovieTypeCount();
 }

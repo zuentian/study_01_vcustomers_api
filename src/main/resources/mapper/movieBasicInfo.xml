@@ -152,4 +152,8 @@
         where MOVIE_ID=#{movieId,jdbcType=VARCHAR}
     </delete>
 
+
+    <select id="getMovieCountryCount" resultMap="">
+        select count(MOVIE_COUNTRY) as count, MOVIE_COUNTRY from MOVIE_BASIC_INFO group by MOVIE_COUNTRY order by count desc
+    </select>
 </mapper>
