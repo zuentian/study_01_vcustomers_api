@@ -25,4 +25,6 @@ public interface MovieBasicInfoDao {
     int deleteMovieBasicInfoByMovieId(@Param("movieId")String movieId);
 
     List<CountInfo> getMovieCountryCount();
+
+    List<CountInfo> getMovieDBScoreCount(@Param("movieCountry")String movieCountry);
 }

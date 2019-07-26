@@ -69,4 +69,88 @@ public class MovieDataReportController {
         resultMap.put("data",movieTypeCountList);
         return resultMap;
     }
+
+    @Transactional(rollbackFor = {Exception.class})
+    @RequestMapping(value = "/getMovieDBScoreCount",method = RequestMethod.POST)
+    public Map<String,Object> getMovieDBScoreCount(@RequestBody Map<String,Object> param) throws  Exception{
+        Map<String,Object> resultMap=new HashMap<>();
+        List<CountInfo> movieDBScoreCountList =movieBasicInfoDao.getMovieDBScoreCount("");
+        if(movieDBScoreCountList!=null){
+            String[] name=new String[movieDBScoreCountList.size()];
+            int[] value=new int[movieDBScoreCountList.size()];
+            int i=0;
+            for(CountInfo countInfo:movieDBScoreCountList){
+
+                name[i]=countInfo.getName();
+                value[i]=countInfo.getValue();
+                i++;
+            }
+            resultMap.put("name",name);
+            resultMap.put("value",value);
+        }
+        List<CountInfo> movieDBScoreCountChinaList =movieBasicInfoDao.getMovieDBScoreCount("中国大陆");
+        if(movieDBScoreCountChinaList!=null){
+            String[] nameChina=new String[movieDBScoreCountChinaList.size()];
+            int[] valueChina=new int[movieDBScoreCountChinaList.size()];
+            int i=0;
+            for(CountInfo countInfo:movieDBScoreCountChinaList){
+
+                nameChina[i]=countInfo.getName();
+                valueChina[i]=countInfo.getValue();
+                i++;
+            }
+            resultMap.put("nameChina",nameChina);
+            resultMap.put("valueChina",valueChina);
+        }
+
+        List<CountInfo> movieDBScoreCountUsaList =movieBasicInfoDao.getMovieDBScoreCount("美国");
+        if(movieDBScoreCountUsaList!=null){
+            String[] nameUsa=new String[movieDBScoreCountUsaList.size()];
+            int[] valueUsa=new int[movieDBScoreCountUsaList.size()];
+            int i=0;
+            for(CountInfo countInfo:movieDBScoreCountUsaList){
+
+                nameUsa[i]=countInfo.getName();
+                valueUsa[i]=countInfo.getValue();
+                i++;
+            }
+            resultMap.put("nameUsa",nameUsa);
+            resultMap.put("valueUsa",valueUsa);
+        }
+
+        List<CountInfo> movieDBScoreCountJapanList =movieBasicInfoDao.getMovieDBScoreCount("日本");
+        if(movieDBScoreCountJapanList!=null){
+            String[] nameJapan=new String[movieDBScoreCountJapanList.size()];
+            int[] valueJapan=new int[movieDBScoreCountJapanList.size()];
+            int i=0;
+            for(CountInfo countInfo:movieDBScoreCountJapanList){
+
+                nameJapan[i]=countInfo.getName();
+                valueJapan[i]=countInfo.getValue();
+                i++;
+            }
+            resultMap.put("nameJapan",nameJapan);
+            resultMap.put("valueJapan",valueJapan);
+        }
+
+        List<CountInfo> movieDBScoreCountKorList =movieBasicInfoDao.getMovieDBScoreCount("韩国");
+        if(movieDBScoreCountKorList!=null){
+            String[] nameKor=new String[movieDBScoreCountKorList.size()];
+            int[] valueKor=new int[movieDBScoreCountKorList.size()];
+            int i=0;
+            for(CountInfo countInfo:movieDBScoreCountKorList){
+
+                nameKor[i]=countInfo.getName();
+                valueKor[i]=countInfo.getValue();
+                i++;
+            }
+            resultMap.put("nameKor",nameKor);
+            resultMap.put("valueKor",valueKor);
+        }
+        resultMap.put("data",movieDBScoreCountList);
+
+
+
+        return resultMap;
+    }
 }

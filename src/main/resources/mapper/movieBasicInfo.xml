@@ -159,4 +159,42 @@
     <select id="getMovieCountryCount" resultMap="BaseResultMapCountInfo">
         select count(MOVIE_COUNTRY) as VALUE, MOVIE_COUNTRY as name from MOVIE_BASIC_INFO group by MOVIE_COUNTRY order by VALUE desc
     </select>
+
+    <select id="getMovieDBScoreCount" parameterType="String" resultMap="BaseResultMapCountInfo">
+        select '0~5分' as name ,count(1) as value from MOVIE_BASIC_INFO
+        where MOVIE_DB_SCORE &gt;0 and MOVIE_DB_SCORE &lt;=5
+            <if test="movieCountry!=null and movieCountry!=''">
+                AND MOVIE_COUNTRY = #{movieCountry,jdbcType=VARCHAR}
+            </if>
+        union all
+        select '5~6分' as name ,count(1) as value from MOVIE_BASIC_INFO
+        where MOVIE_DB_SCORE &gt;5 and MOVIE_DB_SCORE &lt;=6
+            <if test="movieCountry!=null and movieCountry!=''">
+                AND MOVIE_COUNTRY=#{movieCountry,jdbcType=VARCHAR}
+            </if>
+        union all
+        select '6~7分' as name ,count(1) as value from MOVIE_BASIC_INFO
+        where MOVIE_DB_SCORE &gt;6 and MOVIE_DB_SCORE &lt;=7
+            <if test="movieCountry!=null and movieCountry!=''">
+                AND MOVIE_COUNTRY=#{movieCountry,jdbcType=VARCHAR}
+            </if>
+        union all
+        select '7~8分' as name ,count(1) as value from MOVIE_BASIC_INFO
+        where MOVIE_DB_SCORE &gt;7 and MOVIE_DB_SCORE &lt;=8
+            <if test="movieCountry!=null and movieCountry!=''">
+                AND MOVIE_COUNTRY=#{movieCountry,jdbcType=VARCHAR}
+            </if>
+        union all
+        select '8~9分' as name ,count(1) as value from MOVIE_BASIC_INFO
+        where MOVIE_DB_SCORE &gt;8 and MOVIE_DB_SCORE &lt;=9
+            <if test="movieCountry!=null and movieCountry!=''">
+                AND MOVIE_COUNTRY=#{movieCountry,jdbcType=VARCHAR}
+            </if>
+        union all
+        select '9~10分' as name ,count(1) as value from MOVIE_BASIC_INFO
+        where MOVIE_DB_SCORE &gt;9 and MOVIE_DB_SCORE &lt;=10
+            <if test="movieCountry!=null and movieCountry!=''">
+            AND MOVIE_COUNTRY=#{movieCountry,jdbcType=VARCHAR}
+            </if>
+    </select>
 </mapper>
