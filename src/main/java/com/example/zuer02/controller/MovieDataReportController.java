@@ -1,11 +1,15 @@
 package com.example.zuer02.controller;
 
+import com.example.zuer02.dao.DictInfoDao;
 import com.example.zuer02.dao.movie.MovieBasicInfoDao;
 import com.example.zuer02.dao.movie.MovieTypeInfoDao;
+import com.example.zuer02.entity.DictInfo;
 import com.example.zuer02.entity.movieReport.CountInfo;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,6 +29,9 @@ public class MovieDataReportController {
 
     @Autowired
     MovieBasicInfoDao movieBasicInfoDao;
+
+    @Autowired
+    DictInfoDao dictInfoDao;
 
 
     @Transactional(rollbackFor = {Exception.class})
@@ -152,5 +159,44 @@ public class MovieDataReportController {
 
 
         return resultMap;
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    @RequestMapping(value = "/getMovieDBScoreDetailInfo",method = RequestMethod.POST)
+    public List<MovieBasicInfoDao> getMovieDBScoreDetailInfo(@RequestBody Map<String,Object> param) throws  Exception{
+
+        String countryIndex=((Integer)param.get("countryIndex")).toString();
+        String DBScoreIndex=((Integer)param.get("DBScoreIndex")).toString();
+        Map<String,Object> map=new HashMap<>();
+        String movieCountry=getDictValue("report1MovieCountry",countryIndex);
+        map.put("movieCountry",movieCountry);
+        String DBScore=getDictValue("report1MovieScoreSection",DBScoreIndex);
+        if(DBScore!=null){
+            String DBScoreStart=DBScore.split(",")[0];
+            map.put("DBScoreStart",DBScoreStart);
+            String DBScoreEnd=DBScore.split(",")[1];
+            map.put("DBScoreEnd",DBScoreEnd);
+        }
+        System.out.println(map);
+        List<MovieBasicInfoDao> movieBasicInfoDaoList=movieBasicInfoDao.queryMovieInfoByCountryAndScore(map);
+
+
+
+        return movieBasicInfoDaoList;
+    }
+
+
+
+
+    public String getDictValue(String dictType,String dictCode) throws Exception{
+
+        DictInfo dictInfo=dictInfoDao.queryDictInfoByDictTypeAndDictId(dictType,dictCode);
+        if(dictInfo!=null){
+            String dictValue=dictInfo.getDictValue();
+            return dictValue;
+        }else{
+            throw new Exception("字典类型["+dictType+"]字典编码["+dictCode+"]数据字典获取失败");
+        }
+
     }
 }

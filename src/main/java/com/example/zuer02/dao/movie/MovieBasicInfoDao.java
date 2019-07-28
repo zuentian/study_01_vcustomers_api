@@ -27,4 +27,6 @@ public interface MovieBasicInfoDao {
     List<CountInfo> getMovieCountryCount();
 
     List<CountInfo> getMovieDBScoreCount(@Param("movieCountry")String movieCountry);
+
+    List<MovieBasicInfoDao> queryMovieInfoByCountryAndScore(Map<String,Object> map);
 }
