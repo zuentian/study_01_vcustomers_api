@@ -37,6 +37,7 @@ public class UserLoginController {
         Preconditions.checkArgument(password != null&&!"".equals(password), "请输入密码");
         LoginInfo loginInfo=login(new UsernamePasswordToken(String.valueOf(username), String.valueOf(password)));
         System.out.println(loginInfo);
+        System.out.println(JWTUtil.sign(loginInfo.getPrincipal(), loginInfo.getCredential()));
         return JWTUtil.sign(loginInfo.getPrincipal(), loginInfo.getCredential());
     }
 
