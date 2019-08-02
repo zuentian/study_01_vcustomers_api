@@ -202,12 +202,11 @@
 
         select * from MOVIE_BASIC_INFO
         <where>
-            MOVIE_DB_SCORE &gt;#{DBScoreStart,jdbcType=VARCHAR} and MOVIE_DB_SCORE &lt;=#{DBScoreEnd,jdbcType=VARCHAR}
+            MOVIE_DB_SCORE &gt; to_number(#{DBScoreStart,jdbcType=VARCHAR}) and MOVIE_DB_SCORE &lt;= to_number(#{DBScoreEnd,jdbcType=VARCHAR})
             <if test="movieCountry!=null and movieCountry!=''">
                 AND MOVIE_COUNTRY=#{movieCountry,jdbcType=VARCHAR}
             </if>
         </where>
-
-
+        order by to_number(MOVIE_DB_SCORE) desc
     </select>
 </mapper>

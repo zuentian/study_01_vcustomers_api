@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -81,21 +82,29 @@ public class MovieDataReportController {
     @RequestMapping(value = "/getMovieDBScoreCount",method = RequestMethod.POST)
     public Map<String,Object> getMovieDBScoreCount(@RequestBody Map<String,Object> param) throws  Exception{
         Map<String,Object> resultMap=new HashMap<>();
-        List<CountInfo> movieDBScoreCountList =movieBasicInfoDao.getMovieDBScoreCount("");
-        if(movieDBScoreCountList!=null){
-            String[] name=new String[movieDBScoreCountList.size()];
-            int[] value=new int[movieDBScoreCountList.size()];
-            int i=0;
-            for(CountInfo countInfo:movieDBScoreCountList){
 
-                name[i]=countInfo.getName();
-                value[i]=countInfo.getValue();
-                i++;
+        List<DictInfo> dictInfoList=getDictValueList("report1MovieCountry");
+        System.out.println(dictInfoList);
+        for(DictInfo dictInfo:dictInfoList){
+            List<CountInfo> movieDBScoreCountList =movieBasicInfoDao.getMovieDBScoreCount(dictInfo.getDictValue());
+            Map<String,Object>map=new HashMap<>();
+            if(movieDBScoreCountList!=null){
+                String[] name=new String[movieDBScoreCountList.size()];
+                int[] value=new int[movieDBScoreCountList.size()];
+                int i=0;
+                for(CountInfo countInfo:movieDBScoreCountList){
+
+                    //name[i]=countInfo.getName();
+                    value[i]=countInfo.getValue();
+                    i++;
+                }
+                //map.put("name",name);
+                map.put("value",value);
             }
-            resultMap.put("name",name);
-            resultMap.put("value",value);
+            resultMap.put(dictInfo.getDictCode(),map);
         }
-        List<CountInfo> movieDBScoreCountChinaList =movieBasicInfoDao.getMovieDBScoreCount("中国大陆");
+
+       /* List<CountInfo> movieDBScoreCountChinaList =movieBasicInfoDao.getMovieDBScoreCount("中国大陆");
         if(movieDBScoreCountChinaList!=null){
             String[] nameChina=new String[movieDBScoreCountChinaList.size()];
             int[] valueChina=new int[movieDBScoreCountChinaList.size()];
@@ -154,7 +163,7 @@ public class MovieDataReportController {
             resultMap.put("nameKor",nameKor);
             resultMap.put("valueKor",valueKor);
         }
-        resultMap.put("data",movieDBScoreCountList);
+        //resultMap.put("data",movieDBScoreCountList);*/
 
 
 
@@ -171,13 +180,12 @@ public class MovieDataReportController {
         String movieCountry=getDictValue("report1MovieCountry",countryIndex);
         map.put("movieCountry",movieCountry);
         String DBScore=getDictValue("report1MovieScoreSection",DBScoreIndex);
-        if(DBScore!=null){
-            String DBScoreStart=DBScore.split(",")[0];
-            map.put("DBScoreStart",DBScoreStart);
-            String DBScoreEnd=DBScore.split(",")[1];
-            map.put("DBScoreEnd",DBScoreEnd);
+        if(DBScore!=null) {
+            String DBScoreStart = DBScore.split(",")[0];
+            map.put("DBScoreStart", DBScoreStart);
+            String DBScoreEnd = DBScore.split(",")[1];
+            map.put("DBScoreEnd", DBScoreEnd);
         }
-        System.out.println(map);
         List<MovieBasicInfoDao> movieBasicInfoDaoList=movieBasicInfoDao.queryMovieInfoByCountryAndScore(map);
 
 
@@ -195,8 +203,18 @@ public class MovieDataReportController {
             String dictValue=dictInfo.getDictValue();
             return dictValue;
         }else{
-            throw new Exception("字典类型["+dictType+"]字典编码["+dictCode+"]数据字典获取失败");
+            throw new Exception("字典类型["+dictType+"] 字典编码["+dictCode+"] 数据字典获取失败");
         }
+
+    }
+
+    public List<DictInfo> getDictValueList(String dictType) throws Exception{
+
+        List<DictInfo> dictInfoList=dictInfoDao.queryDictInfoByDictType(dictType);
+        if(dictInfoList==null){
+            throw new Exception("字典类型["+dictType+"] 数据字典获取失败");
+        }
+        return dictInfoList;
 
     }
 }

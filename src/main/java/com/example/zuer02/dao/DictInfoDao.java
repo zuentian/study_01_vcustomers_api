@@ -23,4 +23,6 @@ public interface DictInfoDao {
     int deleteDictInfoByDictId(@Param("dictId") String dictId);
 
     DictInfo queryDictInfoByDictTypeAndDictId(@Param("dictType") String dictType ,@Param("dictCode")String dictCode);
+
+    List<DictInfo> queryDictInfoByDictType(@Param("dictType") String dictType);
 }

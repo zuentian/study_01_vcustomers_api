@@ -35,6 +35,7 @@
               and DICT_TYPE=#{dictType,jdbcType=VARCHAR}
             </if>
         </where>
+        order by DICT_TYPE ;
     </select>
 
 
@@ -77,6 +78,10 @@
          where a.rn=1
 
 
+    </select>
+    <select id="queryDictInfoByDictType" parameterType="String" resultMap="BaseResultMap">
+        select * from DICT_INFO where  DICT_TYPE=#{dictType,jdbcType=VARCHAR}
+        order by DICT_CODE
     </select>
 
 </mapper>
