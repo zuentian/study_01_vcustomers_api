@@ -7,6 +7,7 @@ import com.example.zuer02.entity.DictInfo;
 import com.example.zuer02.entity.movieReport.CountInfo;
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -15,10 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController//视图解析器
 @EnableAutoConfiguration//自动配置
@@ -82,91 +80,58 @@ public class MovieDataReportController {
     @RequestMapping(value = "/getMovieDBScoreCount",method = RequestMethod.POST)
     public Map<String,Object> getMovieDBScoreCount(@RequestBody Map<String,Object> param) throws  Exception{
         Map<String,Object> resultMap=new HashMap<>();
+        List<DictInfo> dictInfoListScore=getDictValueList("report1MovieScoreSection");
+        String[] movieScoreArray=new String[dictInfoListScore.size()];
+        int index1=0;
+        for(DictInfo dictInfoScore:dictInfoListScore){
+            String value=dictInfoScore.getDictValue();
+            if(value!=null){
+                String[] values=value.split(",");
+                movieScoreArray[index1]=values[0]+"-"+values[1]+"分";
+            }
+            index1++;
+        }
+        resultMap.put("movieScoreArray",movieScoreArray);//电影报告中X轴中的分段名字
+
 
         List<DictInfo> dictInfoList=getDictValueList("report1MovieCountry");
-        System.out.println(dictInfoList);
+        //System.out.println(dictInfoList);
+        String[] movieCountryArray=new String[dictInfoList.size()];
+        List<int[]> movieValueArray=new ArrayList<>();
+        int index=0;
+        List<CountInfo> listArray=new ArrayList<>();
         for(DictInfo dictInfo:dictInfoList){
-            List<CountInfo> movieDBScoreCountList =movieBasicInfoDao.getMovieDBScoreCount(dictInfo.getDictValue());
-            Map<String,Object>map=new HashMap<>();
-            if(movieDBScoreCountList!=null){
-                String[] name=new String[movieDBScoreCountList.size()];
-                int[] value=new int[movieDBScoreCountList.size()];
-                int i=0;
-                for(CountInfo countInfo:movieDBScoreCountList){
-
-                    //name[i]=countInfo.getName();
-                    value[i]=countInfo.getValue();
-                    i++;
-                }
-                //map.put("name",name);
-                map.put("value",value);
+            if(dictInfo.getDictValue()==null||"".equals(dictInfo.getDictValue())){
+                movieCountryArray[index]="全球电影";
+            }else{
+                movieCountryArray[index]=dictInfo.getDictValue()+"电影";
             }
-            resultMap.put(dictInfo.getDictCode(),map);
-        }
 
-       /* List<CountInfo> movieDBScoreCountChinaList =movieBasicInfoDao.getMovieDBScoreCount("中国大陆");
-        if(movieDBScoreCountChinaList!=null){
-            String[] nameChina=new String[movieDBScoreCountChinaList.size()];
-            int[] valueChina=new int[movieDBScoreCountChinaList.size()];
+            String scoreStart="";
+            String scoreEnd="";
+            List<CountInfo> list=new ArrayList<>();
+            for(DictInfo dictInfoScore:dictInfoListScore){
+                scoreStart=(dictInfoScore.getDictValue().split(","))[0];
+                scoreEnd=(dictInfoScore.getDictValue().split(","))[1];
+                Map<String,Object> paramMap=new HashMap<String, Object>();
+                paramMap.put("scoreStart",scoreStart);
+                paramMap.put("scoreEnd",scoreEnd);
+                paramMap.put("movieCountry",dictInfo.getDictValue());
+                List<CountInfo> movieDBScoreCountList =movieBasicInfoDao.getMovieDBScoreCount(paramMap);
+                list.addAll(movieDBScoreCountList);
+
+            }
+            int[] value=new int[list.size()];
             int i=0;
-            for(CountInfo countInfo:movieDBScoreCountChinaList){
-
-                nameChina[i]=countInfo.getName();
-                valueChina[i]=countInfo.getValue();
+            for(CountInfo lists:list){
+                value[i]=lists.getValue();
                 i++;
             }
-            resultMap.put("nameChina",nameChina);
-            resultMap.put("valueChina",valueChina);
+            movieValueArray.add(value);
+            index++;
         }
-
-        List<CountInfo> movieDBScoreCountUsaList =movieBasicInfoDao.getMovieDBScoreCount("美国");
-        if(movieDBScoreCountUsaList!=null){
-            String[] nameUsa=new String[movieDBScoreCountUsaList.size()];
-            int[] valueUsa=new int[movieDBScoreCountUsaList.size()];
-            int i=0;
-            for(CountInfo countInfo:movieDBScoreCountUsaList){
-
-                nameUsa[i]=countInfo.getName();
-                valueUsa[i]=countInfo.getValue();
-                i++;
-            }
-            resultMap.put("nameUsa",nameUsa);
-            resultMap.put("valueUsa",valueUsa);
-        }
-
-        List<CountInfo> movieDBScoreCountJapanList =movieBasicInfoDao.getMovieDBScoreCount("日本");
-        if(movieDBScoreCountJapanList!=null){
-            String[] nameJapan=new String[movieDBScoreCountJapanList.size()];
-            int[] valueJapan=new int[movieDBScoreCountJapanList.size()];
-            int i=0;
-            for(CountInfo countInfo:movieDBScoreCountJapanList){
-
-                nameJapan[i]=countInfo.getName();
-                valueJapan[i]=countInfo.getValue();
-                i++;
-            }
-            resultMap.put("nameJapan",nameJapan);
-            resultMap.put("valueJapan",valueJapan);
-        }
-
-        List<CountInfo> movieDBScoreCountKorList =movieBasicInfoDao.getMovieDBScoreCount("韩国");
-        if(movieDBScoreCountKorList!=null){
-            String[] nameKor=new String[movieDBScoreCountKorList.size()];
-            int[] valueKor=new int[movieDBScoreCountKorList.size()];
-            int i=0;
-            for(CountInfo countInfo:movieDBScoreCountKorList){
-
-                nameKor[i]=countInfo.getName();
-                valueKor[i]=countInfo.getValue();
-                i++;
-            }
-            resultMap.put("nameKor",nameKor);
-            resultMap.put("valueKor",valueKor);
-        }
-        //resultMap.put("data",movieDBScoreCountList);*/
-
-
-
+        resultMap.put("movieValueArray",movieValueArray);//电影报告每个分段的对应的电影部数
+        resultMap.put("movieCountryArray",movieCountryArray);//电影报告中出现的电影制片地区
         return resultMap;
     }
 

@@ -35,7 +35,7 @@ public class DictController {
         int currentPage=(Integer)param.get("currentPage");
         String dictType=(String)param.get("dictType");
         PageHelper.startPage(currentPage,pageSize);
-        PageHelper.orderBy("ALT_DATE desc");
+        PageHelper.orderBy("DICT_TYPE desc");
         Map<String,Object> map=new HashMap<String,Object>();
         map.put("dictType",dictType);
         List<DictInfo> dictInfoList = dictInfoDao.queryDictInfo(map);

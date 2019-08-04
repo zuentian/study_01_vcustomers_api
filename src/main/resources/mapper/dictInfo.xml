@@ -35,7 +35,6 @@
               and DICT_TYPE=#{dictType,jdbcType=VARCHAR}
             </if>
         </where>
-        order by DICT_TYPE ;
     </select>
 
 

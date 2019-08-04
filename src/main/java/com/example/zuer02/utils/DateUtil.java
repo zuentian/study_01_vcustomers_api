@@ -14,6 +14,7 @@ public class DateUtil {
     public final static String FORMAT_STRING_YMD = "yyyy-MM-dd";
 
     public final static String[] REPLACE_STRING = new String[]{"GMT+0800", "GMT+08:00"};
+    public final static String[] REPLACE_STRING1 = new String[]{"GMT+0900", "GMT+09:00"};
 
     public final static String SPLIT_STRING = "(中国标准时间)";
 
@@ -21,6 +22,7 @@ public class DateUtil {
         try {
             if(dateString!=null&&!dateString.equals("")){
                 dateString = dateString.split(Pattern.quote(SPLIT_STRING))[0].replace(REPLACE_STRING[0], REPLACE_STRING[1]);
+                dateString = dateString.split(Pattern.quote(SPLIT_STRING))[0].replace(REPLACE_STRING1[0], REPLACE_STRING1[1]);
                 SimpleDateFormat sf1 = new SimpleDateFormat("E MMM dd yyyy HH:mm:ss z", Locale.US);
                 Date date = sf1.parse(dateString);
                 return date;
