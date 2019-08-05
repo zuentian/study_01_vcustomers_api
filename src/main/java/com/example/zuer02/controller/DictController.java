@@ -3,7 +3,6 @@ package com.example.zuer02.controller;
 
 import com.example.zuer02.dao.DictInfoDao;
 import com.example.zuer02.entity.DictInfo;
-import com.example.zuer02.entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -34,8 +33,10 @@ public class DictController {
         int pageSize=(Integer)param.get("pageSize");
         int currentPage=(Integer)param.get("currentPage");
         String dictType=(String)param.get("dictType");
+        System.out.println(pageSize+"   "+currentPage);
         PageHelper.startPage(currentPage,pageSize);
-        PageHelper.orderBy("DICT_TYPE desc");
+
+        //PageHelper.orderBy("DICT_TYPE desc");//此处使用排序会让数据出现重复，暂时无法找到原因
         Map<String,Object> map=new HashMap<String,Object>();
         map.put("dictType",dictType);
         List<DictInfo> dictInfoList = dictInfoDao.queryDictInfo(map);
