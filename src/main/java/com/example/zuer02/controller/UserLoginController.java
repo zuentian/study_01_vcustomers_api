@@ -43,8 +43,8 @@ public class UserLoginController {
 
     private LoginInfo  login(AuthenticationToken token) throws  Exception{
         try{
-            System.out.println("token="+token.getCredentials()+" " +token.getPrincipal());
-        SecurityUtils.getSubject().login(token);
+            System.out.println("UserLoginController token="+token.getCredentials()+" " +token.getPrincipal());
+            SecurityUtils.getSubject().login(token);
     }catch (UnknownAccountException e) {
         LOGGER.error("账号不存在: {}", token);
         throw new HippoServiceException(401, "账号不存在");

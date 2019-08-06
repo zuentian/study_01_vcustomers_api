@@ -7,12 +7,7 @@ public class LoginInfo {
 
     private String  id;
     private Integer type;
-
-    private Integer userId;
-
     private String principal;
-
     private String credential;
-
     private Integer isLocked;
 }

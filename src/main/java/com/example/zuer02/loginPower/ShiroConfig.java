@@ -20,6 +20,8 @@ public class ShiroConfig {
 
     @Bean
     public SecurityManager securityManager(UserRealm userRealm) {
+        System.out.println("ShiroConfig 构建SecurityManager 环境");
+        //构建SecurityManager 环境
         DefaultSecurityManager defaultSecurityManager = new DefaultSecurityManager();
         defaultSecurityManager.setRealm(userRealm);
 
@@ -35,7 +37,7 @@ public class ShiroConfig {
         defaultSubjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
 
         defaultSecurityManager.setSubjectDAO(defaultSubjectDAO);
-
+        System.out.println("ShiroConfig 主体提交认证请求");
         SecurityUtils.setSecurityManager(defaultSecurityManager);
         return defaultSecurityManager;
     }

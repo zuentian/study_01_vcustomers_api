@@ -8,8 +8,13 @@ import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.PasswordService;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.crypto.hash.Hash;
+import org.apache.shiro.crypto.hash.HashRequest;
+import org.apache.shiro.crypto.hash.format.HashFormat;
+import org.apache.shiro.crypto.hash.format.ParsableHashFormat;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;
@@ -23,25 +28,27 @@ public class UserRealm extends AuthorizingRealm {
     //获取角色权限信息
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        System.out.println("获取角色权限信息："+principalCollection);
+        System.out.println("获取角色权限信息：" + principalCollection);
         return new SimpleAuthorizationInfo();
     }
 
     //获取用户凭证信息
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        System.out.println("获取用户凭证信息："+authenticationToken);
+        System.out.println("获取用户凭证信息：" + authenticationToken);
         String username = (String) authenticationToken.getPrincipal();
-        String password =  new String((char[]) authenticationToken.getCredentials());
+        String password = new String((char[]) authenticationToken.getCredentials());
+        System.out.println("username=" + username + " password=" + password);
         LoginInfo loginInfo = loginInfoController.obtainByTypeAndPrincipal(LoginAccountType.MOBILE, username);
-        System.out.println("获取用户凭证信息loginInfo："+loginInfo);
 
+        System.out.println("获取用户凭证信息loginInfo：" + loginInfo);
 
-        if(!passwordService.passwordsMatch(password, loginInfo.getCredential()))
+        if (!passwordService.passwordsMatch(password, loginInfo.getCredential()))
             throw new IncorrectCredentialsException();
 
-        if(Objects.equals(loginInfo.getIsLocked(), LoginStatus.LOCKED))
+        if (Objects.equals(loginInfo.getIsLocked(), LoginStatus.LOCKED))
             throw new LockedAccountException();
         return new SimpleAuthenticationInfo(loginInfo, password, getName());
     }
+
 }
