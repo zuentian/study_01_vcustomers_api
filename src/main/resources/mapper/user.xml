@@ -10,7 +10,7 @@
         <result column="STATUE" property="isLocked" jdbcType="NUMERIC" />
     </resultMap>
 
-    <insert id="insertUser" parameterType="com.example.zuer02.entity.User">
+    <!--<insert id="insertUser" parameterType="com.example.zuer02.entity.LoginInfo">
 
 
         insert into USER_INFO
@@ -23,7 +23,7 @@
         #{isLocked,jdbcType=NUMERIC}
         )
 
-    </insert>
+    </insert>-->
 
 
     <select id="findAccountByTypeAndPrincipal" resultMap="BaseResultMap">
