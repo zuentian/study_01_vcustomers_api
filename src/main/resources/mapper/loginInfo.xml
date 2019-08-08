@@ -29,7 +29,7 @@
     <select id="findAccountByTypeAndPrincipal" resultMap="BaseResultMap">
         select
         *
-        from USER_INFO
+        from LOGIN_INFO
         where USER_CODE = #{principal,jdbcType=VARCHAR}
         and type =#{type,jdbcType=NUMERIC}
     </select>

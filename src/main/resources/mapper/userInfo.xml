@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.zuer02.dao.UserDao" >
+
+    <resultMap id="BaseResultMap" type="com.example.zuer02.entity.User" >
+        <id column="ID" property="userId" jdbcType="VARCHAR" />
+        <result column="NAME" property="userName" jdbcType="NUMERIC" />
+        <result column="NAME_BAK" property="userNameBak" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!--<insert id="insertUser" parameterType="com.example.zuer02.entity.LoginInfo">
+
+
+        insert into USER_INFO
+        (ID,TYPE,USER_CODE,PASSWORD,STATUE)
+        values(
+        #{id,jdbcType=VARCHAR},
+        #{type,jdbcType=NUMERIC},
+        #{principal,jdbcType=VARCHAR},
+        #{credential,jdbcType=VARCHAR},
+        #{isLocked,jdbcType=NUMERIC}
+        )
+
+    </insert>-->
+
+
+    <select id="obtainByUserId" resultMap="BaseResultMap">
+        select
+        *
+        from USER_INFO
+        where ID = #{userId,jdbcType=VARCHAR}
+    </select>
+
+
+</mapper>

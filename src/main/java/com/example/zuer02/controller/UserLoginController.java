@@ -1,7 +1,9 @@
 package com.example.zuer02.controller;
 
-
+import com.example.zuer02.entity.LoginAccountType;
 import com.example.zuer02.entity.LoginInfo;
+import com.example.zuer02.entity.LoginStatus;
+import com.example.zuer02.entity.User;
 import com.example.zuer02.err.HippoServiceException;
 import com.example.zuer02.utils.JWTUtil;
 import org.apache.shiro.SecurityUtils;
@@ -9,6 +11,7 @@ import org.apache.shiro.authc.*;
 import org.assertj.core.util.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @EnableAutoConfiguration
@@ -24,7 +28,11 @@ import java.util.Map;
 public class UserLoginController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserLoginController.class);
 
+    @Autowired
+    private LoginInfoController loginInfoController;
 
+    @Autowired
+    private UserController userController;
 
     @Transactional(rollbackFor = {Exception.class})
     @RequestMapping(value = "/UserLogin/login", method = RequestMethod.POST)
@@ -61,4 +69,29 @@ public class UserLoginController {
         return (LoginInfo)SecurityUtils.getSubject().getPrincipal();
     }
 
+    @Transactional(rollbackFor = {Exception.class})
+    @RequestMapping(value = "/UserLogin/getCurrentUser",method = RequestMethod.POST)
+    public User getCurrentUser(@RequestBody Map<String, Object> param)throws Exception{
+
+        String token=(String)param.get("token");
+        Preconditions.checkArgument(token != null&&!"".equals(token), "token cannot be null!");
+
+        System.out.println("getCurrentUser token=["+token+"] Username=["+JWTUtil.getUsername(token)+"]");
+        LoginInfo loginInfo=loginInfoController.obtainByTypeAndPrincipal(LoginAccountType.MOBILE, JWTUtil.getUsername(token));
+
+        System.out.println("getCurrentUser loginInfo=["+loginInfo+"]");
+        if(!JWTUtil.verify(token, loginInfo.getPrincipal(), loginInfo.getCredential()))
+            throw new HippoServiceException(401, "Token校验失败");
+        if(Objects.equals(loginInfo.getIsLocked(), LoginStatus.LOCKED))
+            throw new HippoServiceException(401, "该账号被锁定，请联系管理员");
+
+        return userController.obtainByUserId(loginInfo.getId());
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    @RequestMapping(value = "/UserLogin/logout",method = RequestMethod.POST)
+    public void logout(@RequestBody Map<String, Object> param)throws Exception{
+
+        SecurityUtils.getSubject().logout();
+    }
 }
