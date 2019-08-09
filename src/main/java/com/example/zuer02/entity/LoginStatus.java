@@ -1,5 +1,8 @@
 package com.example.zuer02.entity;
 
+import lombok.Getter;
+
+@Getter
 public enum  LoginStatus {
 
     LOCKED(1, "账号被锁"),

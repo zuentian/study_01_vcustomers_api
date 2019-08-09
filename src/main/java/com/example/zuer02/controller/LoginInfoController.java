@@ -29,4 +29,16 @@ public class LoginInfoController {
                 //.map(item -> Transformer.transform(item, LoginInfo.class))
                 //.orElseThrow(() -> new IllegalArgumentException("cannot find account by type=" + type + " and principal=" + principal));
     }
+
+    public void getLoginInfoByPrincipal(String principal)throws Exception {
+
+        List<LoginInfo> loginInfoList=loginInfoDao.getLoginInfoByPrincipal(principal);
+        if(loginInfoList!=null&&loginInfoList.size()>0){
+            throw new IllegalArgumentException("该用户已注册！");
+        }
+    }
+
+    public void insertLoginInfo(LoginInfo loginInfo) {
+        loginInfoDao.insertLoginInfo(loginInfo);
+    }
 }

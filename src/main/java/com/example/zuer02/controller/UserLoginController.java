@@ -8,6 +8,7 @@ import com.example.zuer02.err.HippoServiceException;
 import com.example.zuer02.utils.JWTUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.assertj.core.util.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 @RestController
 @EnableAutoConfiguration
@@ -93,5 +95,30 @@ public class UserLoginController {
     public void logout(@RequestBody Map<String, Object> param)throws Exception{
 
         SecurityUtils.getSubject().logout();
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    @RequestMapping(value = "/UserLogin/register", method = RequestMethod.POST)
+    public void register(@RequestBody Map<String, Object> param) throws Exception {
+        System.out.println("登录信息："+param);
+        String username=(String)param.get("username");
+        String password=(String)param.get("password");
+        Preconditions.checkArgument(username != null&&!"".equals(username), "请输入用户名");
+        Preconditions.checkArgument(password != null&&!"".equals(password), "请输入密码");
+        loginInfoController.getLoginInfoByPrincipal(username);
+
+        DefaultPasswordService defaultPasswordService=new DefaultPasswordService();
+        String passwordEncrypt = defaultPasswordService.encryptPassword(password);
+        LoginInfo loginInfo=new LoginInfo();
+        loginInfo.setId( UUID.randomUUID().toString());
+        loginInfo.setType(LoginAccountType.MOBILE.getCode());
+        loginInfo.setCredential(passwordEncrypt);
+        loginInfo.setPrincipal(username);
+        loginInfo.setIsLocked(LoginStatus.NORMAL.getCode());
+        System.out.println(loginInfo);
+        loginInfoController.insertLoginInfo(loginInfo);
+
+
+
     }
 }
