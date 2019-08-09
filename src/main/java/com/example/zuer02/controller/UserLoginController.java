@@ -100,7 +100,6 @@ public class UserLoginController {
     @Transactional(rollbackFor = {Exception.class})
     @RequestMapping(value = "/UserLogin/register", method = RequestMethod.POST)
     public void register(@RequestBody Map<String, Object> param) throws Exception {
-        System.out.println("登录信息："+param);
         String username=(String)param.get("username");
         String password=(String)param.get("password");
         Preconditions.checkArgument(username != null&&!"".equals(username), "请输入用户名");
@@ -110,13 +109,16 @@ public class UserLoginController {
         DefaultPasswordService defaultPasswordService=new DefaultPasswordService();
         String passwordEncrypt = defaultPasswordService.encryptPassword(password);
         LoginInfo loginInfo=new LoginInfo();
-        loginInfo.setId( UUID.randomUUID().toString());
+        String uuid=UUID.randomUUID().toString();
+        loginInfo.setId(uuid);
         loginInfo.setType(LoginAccountType.MOBILE.getCode());
         loginInfo.setCredential(passwordEncrypt);
         loginInfo.setPrincipal(username);
         loginInfo.setIsLocked(LoginStatus.NORMAL.getCode());
         System.out.println(loginInfo);
         loginInfoController.insertLoginInfo(loginInfo);
+
+        
 
 
 

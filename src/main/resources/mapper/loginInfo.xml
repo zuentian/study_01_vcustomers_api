@@ -10,10 +10,10 @@
         <result column="STATUE" property="isLocked" jdbcType="NUMERIC" />
     </resultMap>
 
-    <!--<insert id="insertUser" parameterType="com.example.zuer02.entity.LoginInfo">
+    <insert id="insertLoginInfo" parameterType="com.example.zuer02.entity.LoginInfo">
 
 
-        insert into USER_INFO
+        insert into LOGIN_INFO
         (ID,TYPE,USER_CODE,PASSWORD,STATUE)
         values(
         #{id,jdbcType=VARCHAR},
@@ -23,7 +23,7 @@
         #{isLocked,jdbcType=NUMERIC}
         )
 
-    </insert>-->
+    </insert>
 
 
     <select id="findAccountByTypeAndPrincipal" resultMap="BaseResultMap">
@@ -34,5 +34,11 @@
         and type =#{type,jdbcType=NUMERIC}
     </select>
 
+    <select id="getLoginInfoByPrincipal" resultMap="BaseResultMap">
+        select
+        *
+        from LOGIN_INFO
+        where USER_CODE = #{principal,jdbcType=VARCHAR}
+    </select>
 
 </mapper>
