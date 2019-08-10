@@ -118,6 +118,9 @@ public class UserLoginController {
         System.out.println(loginInfo);
         loginInfoController.insertLoginInfo(loginInfo);
 
+        User user=new User();
+        user.setUserId(uuid);
+        userController.insertUserInfo(user);
         
 
 

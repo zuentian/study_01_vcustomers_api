@@ -27,4 +27,10 @@ public class UserController {
         }
         return userInfo;
     }
+
+    public void insertUserInfo(User user) {
+
+        userDao.insertUser(user);
+
+    }
 }

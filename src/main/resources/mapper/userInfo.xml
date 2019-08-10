@@ -4,24 +4,22 @@
 
     <resultMap id="BaseResultMap" type="com.example.zuer02.entity.User" >
         <id column="ID" property="userId" jdbcType="VARCHAR" />
-        <result column="NAME" property="userName" jdbcType="NUMERIC" />
+        <result column="NAME" property="userName" jdbcType="VARCHAR" />
         <result column="NAME_BAK" property="userNameBak" jdbcType="VARCHAR" />
     </resultMap>
 
-    <!--<insert id="insertUser" parameterType="com.example.zuer02.entity.LoginInfo">
+    <insert id="insertUser" parameterType="com.example.zuer02.entity.LoginInfo">
 
 
         insert into USER_INFO
-        (ID,TYPE,USER_CODE,PASSWORD,STATUE)
+        (ID,NAME,NAME_BAK)
         values(
-        #{id,jdbcType=VARCHAR},
-        #{type,jdbcType=NUMERIC},
-        #{principal,jdbcType=VARCHAR},
-        #{credential,jdbcType=VARCHAR},
-        #{isLocked,jdbcType=NUMERIC}
+        #{userId,jdbcType=VARCHAR},
+        #{userName,jdbcType=VARCHAR},
+        #{userNameBak,jdbcType=VARCHAR}
         )
 
-    </insert>-->
+    </insert>
 
 
     <select id="obtainByUserId" resultMap="BaseResultMap">
