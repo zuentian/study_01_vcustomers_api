@@ -72,7 +72,8 @@ public class UserLoginController {
     }
 
     @Transactional(rollbackFor = {Exception.class})
-    @RequestMapping(value = "/UserLogin/getCurrentUser",method = RequestMethod.POST)
+   // @RequestMapping(value = "/UserLogin/getCurrentUser",method = RequestMethod.POST)
+    @RequestMapping(value = "/LoginService/getCurrentUser",method = RequestMethod.POST)
     public User getCurrentUser(@RequestBody Map<String, Object> param)throws Exception{
 
         String token=(String)param.get("token");
@@ -91,15 +92,18 @@ public class UserLoginController {
     }
 
     @Transactional(rollbackFor = {Exception.class})
-    @RequestMapping(value = "/UserLogin/logout",method = RequestMethod.POST)
+    //@RequestMapping(value = "/UserLogin/logout",method = RequestMethod.POST)
+    @RequestMapping(value = "/LoginService/logout",method = RequestMethod.POST)
     public void logout(@RequestBody Map<String, Object> param)throws Exception{
-
         SecurityUtils.getSubject().logout();
+
     }
 
     @Transactional(rollbackFor = {Exception.class})
-    @RequestMapping(value = "/UserLogin/register", method = RequestMethod.POST)
-    public void register(@RequestBody Map<String, Object> param) throws Exception {
+    //@RequestMapping(value = "/UserLogin/register", method = RequestMethod.POST)
+
+    @RequestMapping(value = "/LoginService/register", method = RequestMethod.POST)
+    public String register(@RequestBody Map<String, Object> param) throws Exception {
         String username=(String)param.get("username");
         String password=(String)param.get("password");
         Preconditions.checkArgument(username != null&&!"".equals(username), "请输入用户名");
@@ -122,7 +126,7 @@ public class UserLoginController {
         user.setUserId(uuid);
         userController.insertUserInfo(user);
         
-
+        return "sucess";
 
 
     }
