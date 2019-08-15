@@ -13,6 +13,8 @@ public class User implements Serializable {
     private String userNameBak;
 
     private String mobile;
-    private List<Menu> resources;//该用的权限菜单
+
+    private String crtTime;
+    private String altTime;
 
 }

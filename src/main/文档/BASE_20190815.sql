@@ -81,4 +81,5 @@ alter table MENU
 	add constraint MENU_pk
 		primary key (MENU_ID)
 /
-
+ALTER TABLE USER_INFO ADD CRT_TIME DATE NULL;
+ALTER TABLE USER_INFO ADD ALT_TIME DATE NULL;

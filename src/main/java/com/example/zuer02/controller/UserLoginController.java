@@ -1,9 +1,6 @@
 package com.example.zuer02.controller;
 
-import com.example.zuer02.entity.LoginAccountType;
-import com.example.zuer02.entity.LoginInfo;
-import com.example.zuer02.entity.LoginStatus;
-import com.example.zuer02.entity.User;
+import com.example.zuer02.entity.*;
 import com.example.zuer02.err.HippoServiceException;
 import com.example.zuer02.utils.JWTUtil;
 import org.apache.shiro.SecurityUtils;
@@ -20,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -132,5 +130,22 @@ public class UserLoginController {
         return "sucess";
 
 
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    //@RequestMapping(value = "/UserLogin/logout",method = RequestMethod.POST)
+    @RequestMapping(value = "/UserApiService/search",method = RequestMethod.POST)
+    public LoginAndUser search(@RequestBody Map<String, Object> param)throws Exception{
+        String nameOrMobile=(String)param.get("nameOrMobile");
+        String pageNum=(String)param.get("pageNum");
+        String pageSize=(String)param.get("pageSize");
+        String status=(String)param.get("status");
+        Map<String,String> map=new HashMap<String,String>();
+        map.put("nameOrMobile",nameOrMobile);
+        map.put("pageNum",pageNum);
+        map.put("pageSize",pageSize);
+        map.put("status",status);
+        LoginAndUser user=userController.queryUser(map);
+        return user;
     }
 }

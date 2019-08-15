@@ -1,11 +1,14 @@
 package com.example.zuer02.controller;
 
 import com.example.zuer02.dao.UserDao;
+import com.example.zuer02.entity.LoginAndUser;
 import com.example.zuer02.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 
 @RestController//Controller（视图解析器，拿到页面的数据）和ResponseBody（JSON等内容返回到页面）的结合，
@@ -32,5 +35,9 @@ public class UserController {
 
         userDao.insertUser(user);
 
+    }
+
+    public LoginAndUser queryUser(Map<String,String> map) {
+        return userDao.queryUser(map);
     }
 }
