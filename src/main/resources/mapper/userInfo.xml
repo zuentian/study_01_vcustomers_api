@@ -6,17 +6,19 @@
         <id column="ID" property="userId" jdbcType="VARCHAR" />
         <result column="NAME" property="userName" jdbcType="VARCHAR" />
         <result column="NAME_BAK" property="userNameBak" jdbcType="VARCHAR" />
+        <result column="MOBILE" property="mobile" jdbcType="VARCHAR" />
     </resultMap>
 
     <insert id="insertUser" parameterType="com.example.zuer02.entity.LoginInfo">
 
 
         insert into USER_INFO
-        (ID,NAME,NAME_BAK)
+        (ID,NAME,NAME_BAK,MOBILE)
         values(
         #{userId,jdbcType=VARCHAR},
         #{userName,jdbcType=VARCHAR},
-        #{userNameBak,jdbcType=VARCHAR}
+        #{userNameBak,jdbcType=VARCHAR},
+        #{mobile,jdbcType=VARCHAR}
         )
 
     </insert>

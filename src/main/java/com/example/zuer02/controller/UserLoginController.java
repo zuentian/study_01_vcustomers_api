@@ -37,7 +37,8 @@ public class UserLoginController {
     private UserController userController;
 
     @Transactional(rollbackFor = {Exception.class})
-    @RequestMapping(value = "/UserLogin/login", method = RequestMethod.POST)
+    //@RequestMapping(value = "/UserLogin/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/LoginService/login", method = RequestMethod.POST)
     public String addAddressList(@RequestBody Map<String, Object> param) throws Exception {
         System.out.println("登录信息："+param);
         Object username=param.get("username");
@@ -125,6 +126,8 @@ public class UserLoginController {
         User user=new User();
         user.setUserId(uuid);
         userController.insertUserInfo(user);
+
+
         
         return "sucess";
 
