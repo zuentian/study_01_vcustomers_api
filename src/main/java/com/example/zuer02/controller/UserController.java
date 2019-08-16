@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -37,7 +38,7 @@ public class UserController {
 
     }
 
-    public LoginAndUser queryUser(Map<String,String> map) {
-        return userDao.queryUser(map);
+    public List<LoginAndUser> queryUserAndLogin(Map<String,Object> map) {
+        return userDao.queryUserAndLogin(map);
     }
 }

@@ -5,6 +5,7 @@ import com.example.zuer02.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Map;
 
 @Mapper
@@ -15,5 +16,5 @@ public interface UserDao {
 
     void insertUser(User user);
 
-    LoginAndUser queryUser(Map<String,String> map);
+    List<LoginAndUser> queryUserAndLogin(Map<String,Object> map);
 }

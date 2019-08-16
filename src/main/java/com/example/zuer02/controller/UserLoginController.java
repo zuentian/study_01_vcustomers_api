@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @EnableAutoConfiguration
@@ -133,19 +130,35 @@ public class UserLoginController {
     }
 
     @Transactional(rollbackFor = {Exception.class})
-    //@RequestMapping(value = "/UserLogin/logout",method = RequestMethod.POST)
     @RequestMapping(value = "/UserApiService/search",method = RequestMethod.POST)
-    public LoginAndUser search(@RequestBody Map<String, Object> param)throws Exception{
-        String nameOrMobile=(String)param.get("nameOrMobile");
-        String pageNum=(String)param.get("pageNum");
-        String pageSize=(String)param.get("pageSize");
-        String status=(String)param.get("status");
-        Map<String,String> map=new HashMap<String,String>();
-        map.put("nameOrMobile",nameOrMobile);
-        map.put("pageNum",pageNum);
-        map.put("pageSize",pageSize);
-        map.put("status",status);
-        LoginAndUser user=userController.queryUser(map);
-        return user;
+    public Map<String,Object> search(@RequestBody Map<String, Object> param)throws Exception{
+        try {
+            String nameOrMobile=param.get("nameOrMobile")==null?null:(String)param.get("nameOrMobile");
+            int pageNum= param.get("pageNum")==null?-1:(Integer)param.get("pageNum");
+            int pageSize=param.get("pageSize")==null?-1:(Integer)param.get("pageSize");
+            int status=param.get("status")==null?-1:(Integer)param.get("status");
+
+
+            int start=(pageNum-1)*pageSize+1;
+            int end=pageNum*pageSize;
+
+            Map<String,Object> map=new HashMap<String,Object>();
+            map.put("nameOrMobile",nameOrMobile);
+            map.put("start",start);
+            map.put("end",end);
+            map.put("status",status);
+            List<LoginAndUser> userInfoList=userController.queryUserAndLogin(map);
+            if(userInfoList==null){
+                throw new Exception("查无数据");
+            }
+            Map<String,Object> resultMap =new HashMap<String,Object>();
+            resultMap.put("list",userInfoList);
+            resultMap.put("count",userInfoList.size());
+            return resultMap;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception(e.getMessage()) ;
+        }
+
     }
 }

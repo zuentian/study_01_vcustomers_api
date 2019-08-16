@@ -9,6 +9,15 @@
         <result column="MOBILE" property="mobile" jdbcType="VARCHAR" />
     </resultMap>
 
+    <resultMap id="BaseResultUserAndLoginMap" type="com.example.zuer02.entity.LoginAndUser" >
+        <id column="USER_ID" property="userId" jdbcType="VARCHAR" />
+        <id column="STATUE" property="status" jdbcType="NUMERIC" />
+        <result column="NAME" property="userName" jdbcType="VARCHAR" />
+        <result column="NAME_BAK" property="userNameBak" jdbcType="VARCHAR" />
+        <result column="MOBILE" property="mobile" jdbcType="VARCHAR" />
+        <result column="CRT_TIME" property="crtTime" jdbcType="DATE" />
+        <result column="ALT_TIME" property="altTime" jdbcType="DATE" />
+    </resultMap>
     <insert id="insertUser" parameterType="com.example.zuer02.entity.LoginInfo">
 
 
@@ -29,6 +38,38 @@
         *
         from USER_INFO
         where ID = #{userId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="queryUserAndLogin" parameterType="java.util.Map" resultMap="BaseResultUserAndLoginMap">
+        select * from
+        (select tab.*,ROWNUM AS RN FROM
+        (select
+        a.ID as USER_ID,
+        a.STATUE as STATUE,
+        b.ALT_TIME AS ALT_TIME,
+        b.CRT_TIME AS CRT_TIME,
+        b.MOBILE AS MOBILE,
+        b.NAME_BAK AS NAME_BAK,
+        b.NAME as NAME
+        from LOGIN_INFO a left join user_info b on a.ID=b.ID
+        where 1=1
+        <if test="nameOrMobile!=null and nameOrMobile!=''">
+        and    (NAME LIKE #{nameOrMobile,jdbcType=VARCHAR}
+        or  NAME_BAK LIKE #{nameOrMobile,jdbcType=VARCHAR}
+        or  MOBILE LIKE #{nameOrMobile,jdbcType=VARCHAR})
+        </if>
+        <if test="status!=null and status!=-1">
+            and STATUE= #{status,jdbcType=NUMERIC}
+        </if>
+
+
+        order by CRT_TIME DESC
+        ) tab) tab1
+        where
+
+        tab1.RN  BETWEEN #{start} AND #{end}
+
+
     </select>
 
 
